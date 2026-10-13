@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rádios Streaming: Guia Completo para Criadores</title>
+
+  <!-- Essential CDN Libraries -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: 'hsl(210, 75%, 95%)',
+              100: 'hsl(210, 75%, 85%)',
+              200: 'hsl(210, 75%, 75%)',
+              300: 'hsl(210, 75%, 65%)',
+              400: 'hsl(210, 75%, 55%)',
+              500: 'hsl(210, 75%, 40%)',
+              600: 'hsl(210, 75%, 35%)',
+              700: 'hsl(210, 75%, 25%)',
+              800: 'hsl(210, 75%, 15%)',
+              900: 'hsl(210, 75%, 10%)'
+            },
+            accent: {
+              50: 'hsl(240, 65%, 95%)',
+              100: 'hsl(240, 65%, 85%)',
+              200: 'hsl(240, 65%, 75%)',
+              300: 'hsl(240, 65%, 65%)',
+              400: 'hsl(240, 65%, 60%)',
+              500: 'hsl(240, 65%, 55%)',
+              600: 'hsl(240, 65%, 50%)',
+              700: 'hsl(240, 65%, 40%)',
+              800: 'hsl(240, 65%, 30%)',
+              900: 'hsl(240, 65%, 20%)'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+
+  <!-- Preline UI Components -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.js"></script>
+
+  <!-- Micro-interactions & Custom Styles -->
+  <style>
+    html { scroll-behavior: smooth; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      html { scroll-behavior: auto; }
+    }
+
+    .btn-interactive {
+      transition: all 0.2s ease-out;
+    }
+    
+    .btn-interactive:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .btn-interactive:active {
+      transform: scale(0.95);
+    }
+
+    .card-interactive {
+      transition: all 0.3s ease-out;
+      border: 1px solid transparent;
+      --border-lightness: 40%;
+    }
+
+    .dark .card-interactive {
+      --border-lightness: 60%;
+    }
+
+    .card-interactive:hover {
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      filter: brightness(0.98);
+    }
+    
+    /* Primary colored cards */
+    .card-interactive[class*="primary"]:hover,
+    .card-interactive[class*="white"]:hover,
+    .card-interactive[class*="gray-"]:hover {
+      border-color: hsl(210, 75%, var(--border-lightness));
+    }
+    
+    /* Accent colored cards */
+    .card-interactive[class*="accent"]:hover {
+      border-color: hsl(240, 65%, var(--border-lightness));
+    }
+  </style>
+
+  <!-- Dark Mode Toggle Function -->
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark');
+      const isDark = document.body.classList.contains('dark');
+      document.getElementById('sunIcon').style.display = isDark ? 'block' : 'none';
+      document.getElementById('moonIcon').style.display = isDark ? 'none' : 'block';
+    }
+  </script>
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+  <!-- Citation System Script -->
+  <script>
+    function initCitationSystem() {
+      let i = 1, map = new Map();
+      document.querySelectorAll('[data-ref]').forEach(el => {
+        if (el.dataset.citationProcessed) return;
+        const raw = (el.getAttribute('data-ref')||'').trim();
+        if (!raw) return;
+
+        const parts = raw.split('|');
+        const url = parts[0].trim();
+        const idx = (parts[1]||'').trim() || map.get(raw) || (map.set(raw, String(i)), String(i++));
+
+        if (!el.textContent || !el.textContent.trim()) { el.dataset.citationProcessed = 'true'; return; }
+
+        const btn = document.createElement('sup'); btn.textContent = String(idx);
+        Object.assign(btn.style, { fontSize:'8px', color:'#fff', cursor:'pointer', top: '1px', fontWeight:'bold', backgroundColor:'#0284c7', borderRadius:'50%', transition:'all .15s', userSelect:'none', minWidth:'19px', height:'19px', marginLeft:'6px', display:'inline-flex', alignItems:'center', justifyContent:'center', boxShadow:'0 1px 3px rgba(0,0,0,.2)', lineHeight:'1'});
+        btn.addEventListener('mouseenter', ()=> Object.assign(btn.style, { backgroundColor:'#0369a1', transform:'scale(1.12)' }));
+        btn.addEventListener('mouseleave', ()=> Object.assign(btn.style, { backgroundColor:'#0284c7', transform:'scale(1)' }));
+        btn.addEventListener('click', e=>{ e.preventDefault(); e.stopPropagation(); window.open(url, '_blank'); });
+
+        el.appendChild(btn); el.dataset.citationProcessed = 'true';
+      });
+    }
+  </script>
+
+  <!-- Progress bar -->
+  <div class="fixed top-0 left-0 h-1 bg-primary-500 dark:bg-primary-400 z-[60] transition-all duration-300 ease-out" id="progressBar"></div>
+
+  <!-- Floating Header -->
+  <header class="fixed top-0 left-0 right-0 z-50 backdrop-blur bg-gray-50/90 dark:bg-gray-900/90 border-b border-primary-500/20 dark:border-primary-600/20">
+    <nav class="max-w-7xl mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <h1 class="text-xl font-bold text-primary-700 dark:text-primary-300">Web Rádio: Guia Completo</h1>
+        
+        <div class="hidden md:flex items-center space-x-6">
+          <a href="#home" class="btn-interactive text-sm text-primary-600 dark:text-primary-300 hover:text-primary-800 dark:hover:text-primary-200">Início</a>
+          <a href="#plataformas" class="btn-interactive text-sm text-primary-600 dark:text-primary-300 hover:text-primary-800 dark:hover:text-primary-200">Plataformas</a>
+          <a href="#tecnologias" class="btn-interactive text-sm text-primary-600 dark:text-primary-300 hover:text-primary-800 dark:hover:text-primary-200">Tecnologias</a>
+          <a href="#licenciamento" class="btn-interactive text-sm text-primary-600 dark:text-primary-300 hover:text-primary-800 dark:hover:text-primary-200">Licenciamento</a>
+          <a href="#monetizacao" class="btn-interactive text-sm text-primary-600 dark:text-primary-300 hover:text-primary-800 dark:hover:text-primary-200">Monetização</a>
+          <a href="#apps" class="btn-interactive text-sm text-primary-600 dark:text-primary-300 hover:text-primary-800 dark:hover:text-primary-200">Aplicativos</a>
+          <a href="#conclusao" class="btn-interactive text-sm text-primary-600 dark:text-primary-300 hover:text-primary-800 dark:hover:text-primary-200">Conclusão</a>
+        </div>
+
+        <button onclick="toggleDarkMode()" class="btn-interactive p-2 rounded-lg bg-primary-100 dark:bg-primary-800 text-primary-600 dark:text-primary-300 hover:bg-primary-200 dark:hover:bg-primary-700 transition-all">
+          <i data-lucide="sun" id="sunIcon" class="w-5 h-5" style="display:none;"></i>
+          <i data-lucide="moon" id="moonIcon" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="min-h-screen">
+    <!-- Hero Section -->
+    <section id="home" class="py-40 bg-primary-50/50 dark:bg-gray-900" data-aos="fade-up">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="text-center mb-12">
+          <h2 class="text-5xl font-bold mb-6 text-primary-700 dark:text-primary-300">
+            Criando sua Própria Web Rádio
+          </h2>
+          <p class="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            Um guia abrangente sobre plataformas, tecnologias, licenciamento e monetização para iniciantes e criadores independentes
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 items-center mt-16">
+          <div class="space-y-6">
+            <p class="text-gray-700 dark:text-gray-300" data-ref="https://www.cloudrad.io/blog/start-an-internet-radio-station|43">
+              A rádio pela internet representa uma revolução no setor de mídia com custos de inicialização significativamente mais baixos em comparação com a rádio tradicional AM/FM. Enquanto uma estação de rádio tradicional pode exigir investimentos de
+              <span class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">$15.000 a $100.000+</span>,
+              uma rádio pela internet pode começar por apenas
+              <span class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">$15 a $50 por mês</span>.
+            </p>
+
+            <p class="text-gray-700 dark:text-gray-300" data-ref="https://www.cloudrad.io/blog/start-an-internet-radio-station|43">
+              O alcance geográfico é outro diferencial marcante: enquanto a rádio tradicional é limitada a uma área local, a rádio pela internet oferece alcance global instantâneo. A qualidade de áudio também é superior, podendo alcançar qualidade de CD, superando a limitação de largura de banda das estações AM/FM.
+            </p>
+          </div>
+          
+          <img
+            src="https://cdn.qwenlm.ai/ae537a50-ef75-43db-8dc9-fdce744ccc8a/87f51c45-c110-4132-b5f5-00123209efd3/94b569c5-d5d7-48dc-aad1-6645329bd991.png?key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZV91c2VyX2lkIjoiYWU1MzdhNTAtZWY3NS00M2RiLThkYzktZmRjZTc0NGNjYzhhIiwicmVzb3VyY2VfaWQiOiI4N2Y1MWM0NS1jMTEwLTQxMzItYjVmNS0wMDEyMzIwOWVmZDMiLCJyZXNvdXJjZV9jaGF0X2lkIjpudWxsfQ.6meGqDp3gEM1dZvZwmnEx0BaWGPzNz0fh0BSmcwTvq0"
+            alt="Ilustração conceitual de uma estação de rádio moderna com design limpo e contemporâneo. No centro da imagem está um computador portátil moderno (cinza escuro metálico) exibindo uma interface de streaming de áudio com barras de equalizador azuis (#1a73b3) pulsando suavemente. Ao lado do laptop há um microfone profissional de cabeça preta (como o Shure SM7B) conectado por um cabo USB branco. No fundo, uma parede de madeira clara serve como cenário minimalista. À esquerda do laptop, uma pequena placa de circuito impresso (PCB) azul (#1a73b3) com componentes eletrônicos representando a infraestrutura tecnológica. No canto superior direito, ícones discretos de dispositivos: smartphone iPhone, alto-falante inteligente Echo Dot, e ícone de carro conectado. O espaço entre os elementos é limpo e organizado, transmitindo simplicidade e profissionalismo. A iluminação é suave e uniforme, sem sombras duras, criando uma atmosfera acolhedora e tecnológica. A paleta de cores principal é azul (#1a73b3) e cinza escuro, com destaque em roxo (#6366f1) para elementos de interface digital."
+            class="w-full rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300"
+          />
+        </div>
+
+        <div class="mt-8 pl-4 pr-3 py-3 border-l-4 border-primary-500 bg-primary-50/40 dark:bg-primary-900/30 rounded-r-lg">
+          <p class="text-sm font-medium text-primary-900 dark:text-primary-100 leading-relaxed" data-ref="https://www.cloudrad.io/blog/start-an-internet-radio-station|43">
+            <i data-lucide="trending-up" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+            Estatística chave: Segundo a pesquisa Edison Research's Infinite Dial 2025, 228 milhões de americanos (79% da população com 12 anos ou mais) ouvem áudio digital mensalmente.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Plataformas Section -->
+    <section id="plataformas" class="py-20 bg-white/80 dark:bg-gray-900" data-aos="fade-up">
+      <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-4xl font-bold mb-8 text-primary-700 dark:text-primary-300 text-center">
+          Principais Plataformas de Streaming
+        </h2>
+        <p class="text-center text-gray-700 dark:text-gray-300 mb-12 text-lg max-w-3xl mx-auto">
+          Explore as principais soluções disponíveis para hospedagem de rádio online, desde plataformas completas até opções autogerenciadas
+        </p>
+
+        <div class="hs-accordion-group space-y-4">
+          <!-- Radio.co -->
+          <div class="hs-accordion card-interactive bg-white/80 backdrop-blur-sm dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+            <button class="hs-accordion-toggle w-full flex justify-between items-center p-4 text-left hover:bg-primary-50 dark:hover:bg-gray-700/50 transition-colors rounded-xl" id="hs-radio-co">
+              <div class="flex items-center space-x-4">
+                <div class="flex-shrink-0 w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
+                  <i data-lucide="radio" class="w-6 h-6 text-primary-600 dark:text-primary-400"></i>
+                </div>
+                <span class="font-semibold text-lg text-primary-700 dark:text-primary-300">Radio.co</span>
+              </div>
+              <i data-lucide="chevron-down" class="hs-accordion-active:rotate-180 transition-transform duration-300 w-5 h-5 text-primary-600 dark:text-primary-400"></i>
+            </button>
+            <div id="hs-collapse-radio-co" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="hs-radio-co">
+              <div class="p-6 pt-0 space-y-4">
+                <p class="text-gray-700 dark:text-gray-300" data-ref="https://www.radio.co/comparison?srsltid=AU7gw4W9Y6BsgbRFMh_zaqy_uzfp-oXS2SPLFW1sfwUB4aLrP4mSpTo9|5">
+                  Radio.co é posicionada como uma plataforma premium de transmissão white-label que opera 'nos bastidores' para evitar impor sua própria marca aos ouvintes. Ela se destina a radiodifusores profissionais que buscam uma plataforma confiável sem estar aberta a milhares de usuários gratuitos que possam causar abuso ou tráfego malicioso.
+                </p>
+                <p class="text-gray-700 dark:text-gray-300" data-ref="https://www.radio.co/comparison?srsltid=AU7gw4W9Y6BsgbRFMh_zaqy_uzfp-oXS2SPLFW1sfwUB4aLrP4mSpTo9|5">
+                  A plataforma oferece uma solução tudo-em-um com quatro módulos principais: Broadcast (ao vivo de laptop/celular), Create &amp; Schedule (shows autopilot, playlists inteligentes), Manage (colaboração em equipe, estatísticas de ouvintes) e Grow (aplicativos móveis personalizados, players da web, habilidades de smart speakers).
+                </p>
+                <p class="text-gray-700 dark:text-gray-300" data-ref="https://www.radio.co/comparison?srsltid=AU7gw4W9Y6BsgbRFMh_zaqy_uzfp-oXS2SPLFW1sfwUB4aLrP4mSpTo9|5">
+                  Radio.co afirma ter
+                  <span class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">99%</span>
+                  de tempo de atividade, atribuindo essa confiabilidade à sua arquitetura CDN de ponta projetada para lidar com qualquer quantidade de ouvintes. Como modelo de negócios, Radio.co oferece uma avaliação gratuita de 14 dias sem contratos necessários para cancelamento. A empresa afirma ter mais de
+                  <span class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">5.000</span>
+                  radiodifusores usando sua plataforma.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live365 -->
+          <div class="hs-accordion card-interactive bg-white/80 backdrop-blur-sm dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+            <button class="hs-accordion-toggle w-full flex justify-between items-center p-4 text-left hover:bg-primary-50 dark:hover:bg-gray-700/50 transition-colors rounded-xl" id="hs-live365">
+              <div class="flex items-center space-x-4">
+                <div class="flex-shrink-0 w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
+                  <i data-lucide="globe" class="w-6 h-6 text-primary-600 dark:text-primary-400"></i>
+                </div>
+                <span class="font-semibold text-lg text-primary-700 dark:text-primary-300">Live365</span>
+              </div>
+              <i data-lucide="chevron-down" class="hs-accordion-active:rotate-180 transition-transform duration-300 w-5 h-5 text-primary-600 dark:text-primary-400"></i>
+            </button>
+            <div id="hs-collapse-live365" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="hs-live365">
+              <div class="p-6 pt-0 space-y-4">
+                <p class="text-gray-700 dark:text-gray-300" data-ref="https://www.guideflow.com/blog/radio-station-software|17">
+                  Live365 é uma plataforma hospedada tudo-em-um que agrupa cobertura de licenciamento de música para os Estados Unidos, Canadá e México, anúncios de áudio programáticos para monetização e distribuição automática para TuneIn e iHeartRadio. Seus planos variam de
+                  <span class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">$59 a $999 por mês</span>.
+                </p>
+                <p class="text-gray-700 dark:text-gray-300" data-ref="https://live365.com/blog/internet-radio-licensing-and-live365/|9">
+                  Nos Estados Unidos, as estações de rádio pela internet devem obter dois tipos principais de licenças: royalties de composição (para melodias e letras) e royalties de gravação sonora (para gravações digitais). Live365 oferece um serviço que inclui especialistas em licenciamento com décadas de experiência para ajudar as estações a navegar acordos e relatórios com ASCAP, BMI, SESAC, GMR, AllTrack, Word Collections e SoundExchange.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- AzuraCast -->
+          <div class="hs-accordion card-interactive bg-white/80 backdrop-blur-sm dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+            <button class="hs-accordion-toggle w-full flex justify-between items-center p-4 text-left hover:bg-primary-50 dark:hover:bg-gray-700/50 transition-colors rounded-xl" id="hs-azuracast">
+              <div class="flex items-center space-x-4">
+                <div class="flex-shrink-0 w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
+                  <i data-lucide="server" class="w-6 h-6 text-primary-600 dark:text-primary-400"></i>
+                </div>
+                <span class="font-semibold text-lg text-primary-700 dark:text-primary-300">AzuraCast (Autogerenciado)</span>
+              </div>
+              <i data-lucide="chevron-down" class="hs-accordion-active:rotate-180 transition-transform duration-300 w-5 h-5 text-primary-600 dark:text-primary-400"></i>
+            </button>
+            <div id="hs-collapse-azuracast" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="hs-azuracast">
+              <div class="p-6 pt-0 space-y-4">
+                <p class="text-gray-700 dark:text-gray-300" data-ref="https://github.com/azuracast/azuracast|37">
+                  AzuraCast é uma suíte de software de estação de rádio pela internet projetada para ser 'em uma caixa', oferecendo uma pilha completa, autossuficiente e hospedável. É distribuída via Docker e inclui uma interface web e API para gerenciar estações. O software é licenciado sob a Licença Pública Geral Affero GNU (AGPL) versão 3.0, tornando-o software gratuito e de código aberto (FOSS).
+                </p>
+                <p class="text-gray-700 dark:text-gray-300" data-ref="https://savepoint.fm/blog/azuracast-alternatives|16">
+                  AzuraCast é uma alternativa autogerenciada que suporta tanto áudio quanto vídeo. Pode ser instalado via CLI no Linux ou como um aplicativo desktop no Windows. Uma 'Passagem de Transmissão' única de
+                  <span class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">$150</span>
+                  desbloqueia simulação para canais Discord, YouTube Live, Twitch, Kick e Mixcloud.
+                </p>
+                <div class="pl-4 pr-3 py-3 border-l-4 border-amber-500 bg-amber-50/40 dark:bg-amber-900/30 rounded-r-lg">
+                  <p class="text-sm font-medium text-amber-900 dark:text-amber-100 leading-relaxed" data-ref="https://www.shoutcastnet.com/shoutcast-vs-azuracast.php|34">
+                    <i data-lucide="info" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                    Observação importante: Os requisitos de servidor diferem significativamente: Shoutcast pode rodar em servidores de baixo custo com 512MB de RAM, enquanto AzuraCast requer servidores de alto desempenho com 2GB+ de RAM.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Airtime Pro -->
+          <div class="hs-accordion card-interactive bg-white/80 backdrop-blur-sm dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+            <button class="hs-accordion-toggle w-full flex justify-between items-center p-4 text-left hover:bg-primary-50 dark:hover:bg-gray-700/50 transition-colors rounded-xl" id="hs-airtime">
+              <div class="flex items-center space-x-4">
+                <div class="flex-shrink-0 w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
+                  <i data-lucide="calendar-clock" class="w-6 h-6 text-primary-600 dark:text-primary-400"></i>
+                </div>
+                <span class="font-semibold text-lg text-primary-700 dark:text-primary-300">Airtime Pro</span>
+              </div>
+              <i data-lucide="chevron-down" class="hs-accordion-active:rotate-180 transition-transform duration-300 w-5 h-5 text-primary-600 dark:text-primary-400"></i>
+            </button>
+            <div id="hs-collapse-airtime" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="hs-airtime">
+              <div class="p-6 pt-0 space-y-4">
+                <p class="text-gray-700 dark:text-gray-300" data-ref="https://www.radiocult.fm/compare/airtime-pro|12">
+                  Airtime Pro é posicionada como uma plataforma para lançar uma estação de rádio online rapidamente, focando em automação (AutoDJ), agendamento baseado em calendário e entrar no ar rápido com configuração mínima. Airtime Pro está vinculada à capacidade de ouvintes concorrentes em seus planos, com seu plano de nível superior (
+                  <span class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">$99.95 por mês</span>)
+                  sendo o único que oferece ouvintes ilimitados.
+                </p>
+                <p class="text-gray-700 dark:text-gray-300" data-ref="https://www.radiocult.fm/compare/airtime-pro|12">
+                  Em termos de qualidade de streaming, o stream de Airtime Pro é limitado a
+                  <span class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">196kbps</span>
+                  mesmo em seu plano mais caro, enquanto RadioCult suporta até 320kbps.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tecnologias Section -->
+    <section id="tecnologias" class="py-20 bg-primary-50/50 dark:bg-gray-800" data-aos="fade-up">
+      <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-4xl font-bold mb-8 text-primary-700 dark:text-primary-300 text-center">
+          Tecnologias e Protocolos de Streaming
+        </h2>
+        <p class="text-center text-gray-700 dark:text-gray-300 mb-12 text-lg max-w-3xl mx-auto">
+          Entenda os protocolos de streaming, codecs de áudio e arquiteturas de CDN que sustentam a transmissão de áudio online
+        </p>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
+          <div class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-900 rounded-xl shadow-md">
+            <h3 class="text-xl font-semibold text-primary-700 dark:text-primary-300 mb-4" data-ref="https://www.cloudrad.io/help/shoutcast-vs-icecast-vs-hls|29">Protocolos de Streaming</h3>
+            <div class="space-y-3">
+              <div class="flex items-start space-x-3">
+                <i data-lucide="zap" class="w-5 h-5 text-primary-600 dark:text-primary-400 mt-1 flex-shrink-0"></i>
+                <div>
+                  <p class="font-semibold text-gray-900 dark:text-gray-100">Shoutcast</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Protocolo proprietário da Nullsoft com latência de 2-5 segundos, requer licença paga para uso comercial</p>
+                </div>
+              </div>
+              <div class="flex items-start space-x-3">
+                <i data-lucide="shield-check" class="w-5 h-5 text-primary-600 dark:text-primary-400 mt-1 flex-shrink-0"></i>
+                <div>
+                  <p class="font-semibold text-gray-900 dark:text-gray-100">Icecast</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Servidor de código aberto (GPL v2) da Xiph.Org Foundation, suporte nativo para codecs abertos como Ogg Vorbis e Opus</p>
+                </div>
+              </div>
+              <div class="flex items-start space-x-3">
+                <i data-lucide="wifi" class="w-5 h-5 text-primary-600 dark:text-primary-400 mt-1 flex-shrink-0"></i>
+                <div>
+                  <p class="font-semibold text-gray-900 dark:text-gray-100">HLS (HTTP Live Streaming)</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Padrão aberto da Apple (RFC 8216) com latência de 15-30 segundos, suporte a bitrate adaptativo</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-900 rounded-xl shadow-md">
+            <h3 class="text-xl font-semibold text-primary-700 dark:text-primary-300 mb-4" data-ref="https://www.dacast.com/blog/best-audio-codec/|33">Codecs de Áudio</h3>
+            <div class="space-y-3">
+              <div class="flex items-start space-x-3">
+                <i data-lucide="circle-check" class="w-5 h-5 text-primary-600 dark:text-primary-400 mt-1 flex-shrink-0"></i>
+                <div>
+                  <p class="font-semibold text-gray-900 dark:text-gray-100">AAC (Advanced Audio Coding)</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Padrão da indústria para streaming de vídeo online, melhor eficiência de compressão e qualidade de som superior a MP3</p>
+                </div>
+              </div>
+              <div class="flex items-start space-x-3">
+                <i data-lucide="sparkles" class="w-5 h-5 text-primary-600 dark:text-primary-400 mt-1 flex-shrink-0"></i>
+                <div>
+                  <p class="font-semibold text-gray-900 dark:text-gray-100">Opus</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Codec de áudio de próxima geração, código aberto, qualidade superior em todos os bitrates, ideal para streaming ao vivo</p>
+                </div>
+              </div>
+              <div class="flex items-start space-x-3">
+                <i data-lucide="music" class="w-5 h-5 text-primary-600 dark:text-primary-400 mt-1 flex-shrink-0"></i>
+                <div>
+                  <p class="font-semibold text-gray-900 dark:text-gray-100">MP3</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Codec bem conhecido dos anos 1990, mas codecs mais novos como AAC e Opus oferecem melhor qualidade de som no mesmo bitrate</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-interactive p-8 bg-white/90 backdrop-blur-sm dark:bg-gray-900 rounded-xl shadow-md">
+          <h3 class="text-2xl font-semibold text-primary-700 dark:text-primary-300 mb-6" data-ref="https://www.fastly.com/blog/best-cdn-providers|27">Redes de Distribuição de Conteúdo (CDN)</h3>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <p class="text-gray-700 dark:text-gray-300 mb-4">
+                Uma CDN (Rede de Distribuição de Conteúdo) é um sistema de servidores distribuídos que armazena e armazena conteúdo do site como HTML, CSS, imagens e vídeos em servidores de borda próximos aos usuários. Isso melhora o desempenho reduzindo a latência, aumentando a disponibilidade, aumentando a escalabilidade e reduzindo custos ao diminuir o tráfego para servidores de origem.
+              </p>
+              <div class="pl-4 pr-3 py-3 border-l-4 border-primary-500 bg-primary-50/40 dark:bg-primary-900/30 rounded-r-lg">
+                <p class="text-sm font-medium text-primary-900 dark:text-primary-100 leading-relaxed">
+                  <i data-lucide="circle-alert" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                  Benefício-chave: CDNs podem alcançar uma redução de latência de até 50% em comparação com servidores de origem distantes, essencial para streaming de áudio em tempo real.
+                </p>
+              </div>
+            </div>
+            
+            <div class="space-y-4">
+              <h4 class="font-semibold text-gray-900 dark:text-gray-100">Principais Provedores CDN</h4>
+              <div class="space-y-2">
+                <div class="flex justify-between items-center p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+                  <span class="text-sm font-medium text-primary-700 dark:text-primary-300">Fastly</span>
+                  <span class="text-xs text-gray-600 dark:text-gray-400">~150ms invalidação global</span>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+                  <span class="text-sm font-medium text-primary-700 dark:text-primary-300">Cloudflare</span>
+                  <span class="text-xs text-gray-600 dark:text-gray-400">Boa cobertura de PoP global</span>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+                  <span class="text-sm font-medium text-primary-700 dark:text-primary-300">Akamai</span>
+                  <span class="text-xs text-gray-600 dark:text-gray-400">Grande pegada global</span>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+                  <span class="text-sm font-medium text-primary-700 dark:text-primary-300">Amazon CloudFront</span>
+                  <span class="text-xs text-gray-600 dark:text-gray-400">Baseado no backbone AWS</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Licenciamento Section -->
+    <section id="licenciamento" class="py-20 bg-white/80 dark:bg-gray-900" data-aos="fade-up">
+      <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-4xl font-bold mb-8 text-primary-700 dark:text-primary-300 text-center">
+          Licenciamento de Direitos Autorais
+        </h2>
+        <p class="text-center text-gray-700 dark:text-gray-300 mb-12 text-lg max-w-3xl mx-auto">
+          Compreenda os requisitos legais para reprodução pública de música e como diferentes países regulamentam o streaming de áudio online
+        </p>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
+          <div class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-900 rounded-xl shadow-md">
+            <h3 class="text-xl font-semibold text-primary-700 dark:text-primary-300 mb-4" data-ref="https://www4.ecad.org.br/digital-services-general-information/|6">Brasil - ECAD</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              O ECAD (Escritório Central de Arrecadação e Distribuição) é a sociedade de gestão coletiva no Brasil responsável por conceder licenças para direitos de execução pública, conforme exigido pela Seção 99 da Lei de Direitos Autorais brasileira – 9.610/98.
+            </p>
+            <p class="text-gray-700 dark:text-gray-300">
+              O modelo de licenciamento usado pelo ECAD no Brasil é uma 'licença em branco', onde uma rádio pela internet paga uma taxa mensal para uso ilimitado de obras musicais e gravações sonoras, em vez de ser cobrada por música reproduzida.
+            </p>
+          </div>
+
+          <div class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-900 rounded-xl shadow-md">
+            <h3 class="text-xl font-semibold text-primary-700 dark:text-primary-300 mb-4" data-ref="https://ids.org.br/en/superior-court-of-justice-decides-that-ecad-can-collect-royalties-from-streaming-services/|7">Jurisprudência Brasileira</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              O Superior Tribunal de Justiça (STJ) no Brasil decidiu no Recurso Especial n. 1.559.264 que o streaming de música constitui uma forma de execução pública, e portanto, os royalties derivados desses serviços devem ser coletados pelo ECAD (a sociedade de coleta de direitos autorais brasileira).
+            </p>
+            <div class="pl-4 pr-3 py-3 border-l-4 border-amber-500 bg-amber-50/40 dark:bg-amber-900/30 rounded-r-lg">
+              <p class="text-sm font-medium text-amber-900 dark:text-amber-100 leading-relaxed">
+                <i data-lucide="triangle-alert" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+                Importante: A transmissão de áudio via streaming é considerada exploração econômica de obras, exigindo autorização dos proprietários de direitos autorais.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-interactive p-8 bg-white/90 backdrop-blur-sm dark:bg-gray-900 rounded-xl shadow-md">
+          <h3 class="text-2xl font-semibold text-primary-700 dark:text-primary-300 mb-6" data-ref="https://www.caster.fm/resources/internet-radio-licensing-guide/|8">EUA - Sistema Dual de Licenciamento</h3>
+          <div class="grid md:grid-cols-2 gap-8">
+            <div>
+              <p class="text-gray-700 dark:text-gray-300 mb-4">
+                O quadro legal para rádio pela internet difere dos serviços de streaming sob demanda. Webcasting/rádio pela internet, onde o radiodifusor controla a playlist, opera sob disposições de 'licença estatutária' nos EUA (por exemplo, SoundExchange) ou esquemas equivalentes de licenciamento coletivo em outros lugares. Isso contrasta com streaming interativo/sob demanda (como Spotify), que requer acordos de licenciamento diretos com cada gravadora.
+              </p>
+              <p class="text-gray-700 dark:text-gray-300">
+                Existem duas principais formas de lidar com licenciamento de música: Licenciamento DIY vs. Plataforma Licenciada. O caminho DIY oferece custos mais baixos para estações pequenas, mas requer gerenciar papelada e relatórios diretamente com múltiplas organizações. O caminho de Plataforma Licenciada empacota cobertura em pacotes de hospedagem (por exemplo, Live365 inclui ASCAP, BMI, SESAC, GMR e SoundExchange), mas vem com custo mensal mais alto e amarra a estação àquela plataforma.
+              </p>
+            </div>
+            
+            <div class="space-y-4">
+              <h4 class="font-semibold text-gray-900 dark:text-gray-100">Organizações Principais nos EUA</h4>
+              <div class="space-y-3">
+                <div class="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+                  <p class="font-semibold text-primary-700 dark:text-primary-300 mb-1">ASCAP</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">American Society of Composers, Authors, and Publishers</p>
+                </div>
+                <div class="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+                  <p class="font-semibold text-primary-700 dark:text-primary-300 mb-1">BMI</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Broadcast Music, Inc.</p>
+                </div>
+                <div class="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+                  <p class="font-semibold text-primary-700 dark:text-primary-300 mb-1">SESAC</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Society of European Stage Authors and Composers</p>
+                </div>
+                <div class="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+                  <p class="font-semibold text-primary-700 dark:text-primary-300 mb-1">SoundExchange</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Coleta royalties de performance digital para gravações sonoras</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8 pl-4 pr-3 py-3 border-l-4 border-amber-500 bg-amber-50/40 dark:bg-amber-900/30 rounded-r-lg">
+          <p class="text-sm font-medium text-amber-900 dark:text-amber-100 leading-relaxed" data-ref="https://www.caster.fm/resources/internet-radio-licensing-guide/|8">
+            <i data-lucide="circle-alert" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+            Erros comuns de novos radiodifusores: 1) Tocar música do Spotify/Apple Music, o que viola seus termos de serviço. 2) Confiar em 'uso justo' para músicas inteiras. 3) Assumir que status não comercial isenta de licenciamento. 4) Ignorar regras de programação DMCA (por exemplo, não mais de 3 músicas do mesmo álbum em 3 horas).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Monetização Section -->
+    <section id="monetizacao" class="py-20 bg-primary-50/50 dark:bg-gray-800" data-aos="fade-up">
+      <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-4xl font-bold mb-8 text-primary-700 dark:text-primary-300 text-center">
+          Estratégias de Monetização
+        </h2>
+        <p class="text-center text-gray-700 dark:text-gray-300 mb-12 text-lg max-w-3xl mx-auto">
+          Descubra múltiplas fontes de receita para transformar sua web rádio em um negócio sustentável
+        </p>
+
+        <div class="grid md:grid-cols-3 gap-6 mb-12">
+          <div class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-900 rounded-xl shadow-md">
+            <div class="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center mb-4">
+              <i data-lucide="heart" class="w-6 h-6 text-primary-600 dark:text-primary-400"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-primary-700 dark:text-primary-300 mb-3" data-ref="https://www.shoutcheap.com/monetize-online-radio-station/|2">Doações</h3>
+            <p class="text-sm text-gray-700 dark:text-gray-300">
+              Doações são uma fonte de receita acessível onde fãs podem apoiar uma estação através de plataformas como PayPal, Stripe ou Buy Me a Coffee. Para encorajar suporte recorrente, radiodifusores podem oferecer vantagens como gritos, acesso antecipado a mixes ou criar grupos exclusivos de apoiadores nas redes sociais.
+            </p>
+          </div>
+
+          <div class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-900 rounded-xl shadow-md">
+            <div class="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center mb-4">
+              <i data-lucide="handshake" class="w-6 h-6 text-primary-600 dark:text-primary-400"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-primary-700 dark:text-primary-300 mb-3" data-ref="https://www.shoutcheap.com/monetize-online-radio-station/|2">Patrocínios</h3>
+            <p class="text-sm text-gray-700 dark:text-gray-300">
+              Patrocínios envolvem empresas pagando a um radiodifusor para mencionar sua marca ou incluir mensagens de áudio curtas durante a programação. Este método é particularmente eficaz para estações nicho com audiências segmentadas. Pacotes de patrocínio podem ser expandidos para incluir banners no site ou menções nas redes sociais.
+            </p>
+          </div>
+
+          <div class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-900 rounded-xl shadow-md">
+            <div class="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center mb-4">
+              <i data-lucide="dollar-sign" class="w-6 h-6 text-primary-600 dark:text-primary-400"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-primary-700 dark:text-primary-300 mb-3" data-ref="https://www.shoutcheap.com/monetize-online-radio-station/|2">Assinaturas</h3>
+            <p class="text-sm text-gray-700 dark:text-gray-300">
+              Programas de associação e assinatura permitem às estações oferecer conteúdo exclusivo a ouvintes leais por uma taxa mensal. Recursos adicionais podem incluir shows bônus, playlists premium, streams privados, escuta sem anúncios e mixes baixáveis (se permitido pela licença).
+            </p>
+          </div>
+        </div>
+
+        <div class="card-interactive p-8 bg-white/90 backdrop-blur-sm dark:bg-gray-900 rounded-xl shadow-md mb-8">
+          <h3 class="text-2xl font-semibold text-primary-700 dark:text-primary-300 mb-6" data-ref="https://www.radioking.com/blog/monetize-your-radio-app/|3">Modelos de Receita para Aplicativos</h3>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-3">Freemium</h4>
+              <p class="text-sm text-gray-700 dark:text-gray-300 mb-4">
+                O modelo freemium é uma abordagem padrão nas lojas de aplicativos onde o aplicativo é gratuito para instalar, mas oferece recursos premium para assinantes pagantes. Para uma estação de rádio, esses recursos premium podem incluir acesso a podcasts ou shows exclusivos, escuta sem anúncios, alertas push personalizados, playlists personalizadas, estatísticas pessoais ou votação ao vivo.
+              </p>
+              <p class="text-sm text-gray-700 dark:text-gray-300">
+                Receita de assinaturas móveis ultrapassou
+                <span class="mx-1 px-1.5 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-semibold text-sm">$150 bilhões</span>
+                em 2024.
+              </p>
+            </div>
+            
+            <div>
+              <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-3">Publicidade Áudio</h4>
+              <p class="text-sm text-gray-700 dark:text-gray-300 mb-4">
+                A publicidade de áudio é um ajuste natural para rádio e podcasts, com formatos modernos oferecendo maior flexibilidade. Opções incluem anúncios de áudio entre faixas ou no início de um podcast, anúncios interativos que redirecionam para um site e formatos intersticiais ou banners nativos para o aplicativo.
+              </p>
+              <p class="text-sm text-gray-700 dark:text-gray-300">
+                Redes especializadas como AdMob, TargetSpot e Triton Digital podem ajudar a otimizar rentabilidade. Uma estratégia recomendada é combinar publicidade programática com inserção manual para mais controle e receita mais alta.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pl-4 pr-3 py-3 border-l-4 border-primary-500 bg-primary-50/40 dark:bg-primary-900/30 rounded-r-lg">
+          <p class="text-sm font-medium text-primary-900 dark:text-primary-100 leading-relaxed" data-ref="https://www.radioking.com/blog/monetize-your-radio-app/|3">
+            <i data-lucide="info" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+            Estratégia híbrida: Uma estratégia de monetização eficaz e eficaz para um aplicativo de rádio envolve combinar múltiplos vetores: assinaturas, publicidade de áudio, conteúdo patrocinado, pagamentos diretos (doações) e análise de audiência.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Aplicativos Section -->
+    <section id="apps" class="py-20 bg-white/80 dark:bg-gray-900" data-aos="fade-up">
+      <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-4xl font-bold mb-8 text-primary-700 dark:text-primary-300 text-center">
+          Aplicativos Móveis White-Label
+        </h2>
+        <p class="text-center text-gray-700 dark:text-gray-300 mb-12 text-lg max-w-3xl mx-auto">
+          Soluções completas para criar aplicativos móveis personalizados para sua estação de rádio
+        </p>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
+          <div class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-900 rounded-xl shadow-md">
+            <h3 class="text-xl font-semibold text-primary-700 dark:text-primary-300 mb-4" data-ref="https://www.nobexpartners.com/|18">Nobex Partners</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              Nobex Partners oferece um serviço white-label para estações de rádio construírem aplicativos personalizados iOS e Android. O serviço é projetado para estações independentes e radiodifusores estabelecidos, exigindo nenhum conhecimento de codificação do cliente.
+            </p>
+            <p class="text-gray-700 dark:text-gray-300">
+              O serviço inclui recursos para manter os ouvintes engajados, como shows sob demanda, notificações push e ferramentas de engajamento como jogos e eventos, tudo personalizável para combinar com a identidade visual da estação.
+            </p>
+          </div>
+
+          <div class="card-interactive p-6 bg-white/90 backdrop-blur-sm dark:bg-gray-900 rounded-xl shadow-md">
+            <h3 class="text-xl font-semibold text-primary-700 dark:text-primary-300 mb-4" data-ref="https://streamerr.co/mobile-apps|19">Streamerr</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              Streamerr fornece um aplicativo totalmente white-label para estações de rádio. Os aplicativos são publicados na Apple App Store (iOS) e Google Play (Android) sob o próprio nome da estação, apresentando o logo, cores e arte da estação.
+            </p>
+            <p class="text-gray-700 dark:text-gray-300">
+              Os recursos principais do aplicativo white-label incluem: reprodução em segundo plano, informações em tempo real 'agora tocando' (título da faixa, artista, arte do álbum), integração CarPlay &amp; Android Auto, temporizador embutido de sono e links para redes sociais e sites.
+            </p>
+          </div>
+        </div>
+
+        <div class="card-interactive p-8 bg-white/90 backdrop-blur-sm dark:bg-gray-900 rounded-xl shadow-md">
+          <h3 class="text-2xl font-semibold text-primary-700 dark:text-primary-300 mb-6" data-ref="https://www.broadcastradio.com/mobile-radio-apps|20">Características Padrão de Aplicativos Móveis</h3>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="space-y-3">
+              <div class="flex items-start space-x-3">
+                <i data-lucide="smartphone" class="w-5 h-5 text-primary-600 dark:text-primary-400 mt-1 flex-shrink-0"></i>
+                <div>
+                  <p class="font-semibold text-gray-900 dark:text-gray-100">Design Personalizado</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Estilo limpo com cores e logos personalizados</p>
+                </div>
+              </div>
+              <div class="flex items-start space-x-3">
+                <i data-lucide="radio" class="w-5 h-5 text-primary-600 dark:text-primary-400 mt-1 flex-shrink-0"></i>
+                <div>
+                  <p class="font-semibold text-gray-900 dark:text-gray-100">Reprodução em Segundo Plano</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Streaming ao vivo mesmo quando minimizado ou dispositivo bloqueado</p>
+                </div>
+              </div>
+              <div class="flex items-start space-x-3">
+                <i data-lucide="info" class="w-5 h-5 text-primary-600 dark:text-primary-400 mt-1 flex-shrink-0"></i>
+                <div>
+                  <p class="font-semibold text-gray-900 dark:text-gray-100">Informações em Tempo Real</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Informações 'agora tocando' e arte do álbum em tempo real</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="space-y-3">
+              <div class="flex items-start space-x-3">
+                <i data-lucide="calendar" class="w-5 h-5 text-primary-600 dark:text-primary-400 mt-1 flex-shrink-0"></i>
+                <div>
+                  <p class="font-semibold text-gray-900 dark:text-gray-100">Página de Agendamento</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Exibição da programação da estação</p>
+                </div>
+              </div>
+              <div class="flex items-start space-x-3">
+                <i data-lucide="message-square" class="w-5 h-5 text-primary-600 dark:text-primary-400 mt-1 flex-shrink-0"></i>
+                <div>
+                  <p class="font-semibold text-gray-900 dark:text-gray-100">Notificações Push</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Capacidade de enviar notificações push para ouvintes</p>
+                </div>
+              </div>
+              <div class="flex items-start space-x-3">
+                <i data-lucide="car" class="w-5 h-5 text-primary-600 dark:text-primary-400 mt-1 flex-shrink-0"></i>
+                <div>
+                  <p class="font-semibold text-gray-900 dark:text-gray-100">Suporte CarPlay</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Integração Apple CarPlay disponível sem custo adicional</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8 pl-4 pr-3 py-3 border-l-4 border-amber-500 bg-amber-50/40 dark:bg-amber-900/30 rounded-r-lg">
+          <p class="text-sm font-medium text-amber-900 dark:text-amber-100 leading-relaxed" data-ref="https://streamerr.co/mobile-apps|19">
+            <i data-lucide="circle-alert" class="inline-block w-4 h-4 mr-1.5 -mt-0.5"></i>
+            Requisito de Publicação: Para publicar um aplicativo, o cliente deve ter suas próprias contas de desenvolvedor. Para iOS, uma conta ativa do Programa de Desenvolvedor Apple (£79/ano) em bom estado é necessária. Para Android, uma conta de Organização/Negócio Google Play ($25 única) é obrigatória; contas pessoais serão rejeitadas.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Conclusão Section -->
+    <section id="conclusao" class="py-20 bg-primary-50/50 dark:bg-gray-800" data-aos="fade-up">
+      <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-4xl font-bold mb-8 text-primary-700 dark:text-primary-300 text-center">
+          Considerações Finais
+        </h2>
+        
+        <div class="card-interactive p-8 bg-white/90 backdrop-blur-sm dark:bg-gray-900 rounded-xl shadow-md mb-8">
+          <h3 class="text-2xl font-semibold text-primary-700 dark:text-primary-300 mb-6">Resumo dos Pontos Principais</h3>
+          <div class="space-y-4">
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0 w-8 h-8 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mt-1">
+                <span class="text-primary-700 dark:text-primary-300 font-bold text-sm">1</span>
+              </div>
+              <div>
+                <p class="font-semibold text-gray-900 dark:text-gray-100 mb-1">Baixo Custo de Entrada</p>
+                <p class="text-sm text-gray-700 dark:text-gray-300">Criar uma web rádio é significativamente mais acessível do que rádio tradicional, com custos começando em $15-50 por mês versus $15.000-100.000+ para AM/FM.</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0 w-8 h-8 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mt-1">
+                <span class="text-primary-700 dark:text-primary-300 font-bold text-sm">2</span>
+              </div>
+              <div>
+                <p class="font-semibold text-gray-900 dark:text-gray-100 mb-1">Alcance Global Instantâneo</p>
+                <p class="text-sm text-gray-700 dark:text-gray-300">Ao contrário da rádio tradicional limitada a áreas locais, a web rádio oferece alcance global com qualidade de áudio superior (até qualidade de CD).</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0 w-8 h-8 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mt-1">
+                <span class="text-primary-700 dark:text-primary-300 font-bold text-sm">3</span>
+              </div>
+              <div>
+                <p class="font-semibold text-gray-900 dark:text-gray-100 mb-1">Licenciamento Legal Essencial</p>
+                <p class="text-sm text-gray-700 dark:text-gray-300">É obrigatório obter licenças adequadas antes de transmitir música comercial - isso inclui royalties de composição e gravação sonora nos EUA, ECAD no Brasil, e sistemas equivalentes em outros países.</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0 w-8 h-8 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mt-1">
+                <span class="text-primary-700 dark:text-primary-300 font-bold text-sm">4</span>
+              </div>
+              <div>
+                <p class="font-semibold text-gray-900 dark:text-gray-100 mb-1">Múltiplas Fontes de Receita</p>
+                <p class="text-sm text-gray-700 dark:text-gray-300">A monetização pode vir de doações, patrocínios, assinaturas, publicidade programática, venda de merchandise e licenciamento de conteúdo original.</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0 w-8 h-8 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mt-1">
+                <span class="text-primary-700 dark:text-primary-300 font-bold text-sm">5</span>
+              </div>
+              <div>
+                <p class="font-semibold text-gray-900 dark:text-gray-100 mb-1">Experiência do Usuário Moderna</p>
+                <p class="text-sm text-gray-700 dark:text-gray-300">Aplicativos white-label personalizados oferecem recursos modernos como reprodução em segundo plano, informações em tempo real, CarPlay/Android Auto e notificações push.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-interactive p-8 bg-white/90 backdrop-blur-sm dark:bg-gray-900 rounded-xl shadow-md">
+          <h3 class="text-2xl font-semibold text-primary-700 dark:text-primary-300 mb-6">Recomendações para Iniciantes</h3>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-3">Infraestrutura</h4>
+              <ul class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                <li class="flex items-start space-x-2">
+                  <i data-lucide="check" class="w-4 h-4 text-primary-600 dark:text-primary-400 mt-0.5 flex-shrink-0"></i>
+                  <span>Comece com plataformas hospedadas como Radio.co ou Live365 para evitar complexidade de servidor</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                  <i data-lucide="check" class="w-4 h-4 text-primary-600 dark:text-primary-400 mt-0.5 flex-shrink-0"></i>
+                  <span>Escolha streaming em 128kbps para equilibrar qualidade e acessibilidade</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                  <i data-lucide="check" class="w-4 h-4 text-primary-600 dark:text-primary-400 mt-0.5 flex-shrink-0"></i>
+                  <span>Implemente AutoDJ para garantir 24/7 mesmo sem transmissão ao vivo</span>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-3">Monetização</h4>
+              <ul class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                <li class="flex items-start space-x-2">
+                  <i data-lucide="check" class="w-4 h-4 text-primary-600 dark:text-primary-400 mt-0.5 flex-shrink-0"></i>
+                  <span>Inicie com doações e patrocínios locais antes de expandir para assinaturas</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                  <i data-lucide="check" class="w-4 h-4 text-primary-600 dark:text-primary-400 mt-0.5 flex-shrink-0"></i>
+                  <span>Combine múltiplas fontes de receita para sustentabilidade financeira</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                  <i data-lucide="check" class="w-4 h-4 text-primary-600 dark:text-primary-400 mt-0.5 flex-shrink-0"></i>
+                  <span>Ofereça valor adicional para assinantes (sem anúncios, conteúdo exclusivo)</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-primary-700 dark:bg-gray-900 text-white py-12">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="grid md:grid-cols-3 gap-8 mb-8">
+        <div>
+          <h3 class="text-xl font-bold mb-4 text-primary-100">Sobre Este Guia</h3>
+          <p class="text-sm text-primary-200 dark:text-gray-400">
+            Um recurso educacional abrangente sobre criação de web rádio, cobrindo tecnologia, licenciamento e estratégias de monetização.
+          </p>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold mb-4 text-primary-100">Recursos</h3>
+          <ul class="space-y-2 text-sm text-primary-200 dark:text-gray-400">
+            <li><a href="#plataformas" class="hover:text-primary-50">Plataformas de Streaming</a></li>
+            <li><a href="#tecnologias" class="hover:text-primary-50">Tecnologias e Protocolos</a></li>
+            <li><a href="#licenciamento" class="hover:text-primary-50">Licenciamento de Direitos</a></li>
+            <li><a href="#monetizacao" class="hover:text-primary-50">Monetização</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold mb-4 text-primary-100">Contato</h3>
+          <p class="text-sm text-primary-200 dark:text-gray-400">
+            Este é um guia informativo destinado a fins educacionais. Todas as informações são baseadas em fontes de pesquisa confiáveis.
+          </p>
+        </div>
+      </div>
+      <div class="border-t border-primary-600 dark:border-gray-800 pt-8 text-center">
+        <p class="text-sm text-primary-200 dark:text-gray-400">
+          © 2024 Guia de Web Rádio. Conteúdo baseado em pesquisa acadêmica e fontes industriais.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Initialize Libraries -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize Lucide icons
+      lucide.createIcons();
+
+      // Initialize AOS animations
+      AOS.init({
+        duration: 800,
+        once: true,
+        offset: 100
+      });
+
+      // Initialize Preline components
+      setTimeout(() => {
+        HSStaticMethods.autoInit();
+      }, 100);
+
+      // Progress bar functionality
+      const progressBar = document.getElementById('progressBar');
+      
+      window.addEventListener('scroll', () => {
+        const scrollTop = window.pageYOffset;
+        const docHeight = document.body.scrollHeight - window.innerHeight;
+        const scrollPercent = (scrollTop / docHeight) * 100;
+        
+        if (progressBar) {
+          progressBar.style.width = scrollPercent + '%';
+        }
+      });
+
+      // Citation system initialization
+      initCitationSystem();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Web - Rádio & Playlists</title>
+    
+    <!-- Tailwind CSS (Compilado localmente ou CDN) -->
+    <link href="./dist/output.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://cdn.tailwindcss.com';">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .bar { width: 4px; background: #6366f1; border-radius: 2px; animation: equalize 1s infinite ease-in-out; }
+        @keyframes equalize { 0%, 100% { height: 10px; } 50% { height: 25px; } }
+        .bar:nth-child(1) { animation-delay: 0.1s; }
+        .bar:nth-child(2) { animation-delay: 0.3s; }
+        .bar:nth-child(3) { animation-delay: 0.5s; }
+        .bar:nth-child(4) { animation-delay: 0.2s; }
+        .bar:nth-child(5) { animation-delay: 0.4s; }
+        .live-pulse { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); animation: pulse-red 2s infinite; }
+        @keyframes pulse-red { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <!-- PLAYER MODULE -->
+    <div id="radio-player-widget" class="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200 relative">
+        
+        <!-- Seletor de Modo (Abas) -->
+        <div class="flex border-b border-gray-200 bg-gray-50">
+            <button onclick="switchMode('live')" id="btn-mode-live" class="flex-1 py-3 text-xs font-bold text-center text-indigo-600 bg-white border-b-2 border-indigo-600 transition-colors flex items-center justify-center gap-1">
+                <span class="w-2 h-2 bg-red-500 rounded-full live-pulse"></span> Rádio Ao Vivo
+            </button>
+            <button onclick="switchMode('playlists')" id="btn-mode-playlists" class="flex-1 py-3 text-xs font-bold text-center text-gray-500 hover:text-gray-700 transition-colors flex items-center justify-center gap-1">
+                <i data-lucide="music" class="w-4 h-4"></i> Playlists / Músicas
+            </button>
+        </div>
+
+        <!-- Header -->
+        <div class="relative h-56 bg-gradient-to-br from-indigo-600 to-purple-700 flex flex-col items-center justify-center text-white p-6">
+            <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;"></div>
+
+            <div class="relative z-10 mb-3">
+                <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-white/20 shadow-lg bg-indigo-900 flex items-center justify-center">
+                    <span id="header-badge" class="text-2xl font-black tracking-wider text-white">UFF</span>
+                </div>
+                <div id="live-badge-container" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 live-pulse z-20">
+                    <span class="w-2 h-2 bg-white rounded-full"></span> AO VIVO
+                </div>
+            </div>
+
+            <div class="text-center z-10">
+                <h2 class="text-lg font-bold tracking-wide" id="station-name">Rádio Pop Goiaba UFF</h2>
+                <p class="text-indigo-200 text-xs mt-1" id="stream-status">Carregando...</p>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="p-6 bg-white">
+            <div class="mb-5 text-center">
+                <h3 class="text-gray-900 font-bold text-base truncate" id="track-title">Transmissão ao Vivo</h3>
+                <p class="text-gray-500 text-xs truncate" id="track-artist">Niterói / RJ - Brasil</p>
+            </div>
+
+            <div class="flex items-center justify-center gap-6 mb-5">
+                <button onclick="adjustVolume(-0.1)" class="text-gray-400 hover:text-indigo-600 transition-colors p-2 rounded-full hover:bg-indigo-50">
+                    <i data-lucide="volume-2" class="w-6 h-6"></i>
+                </button>
+
+                <button id="play-btn" class="w-16 h-16 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full flex items-center justify-center shadow-lg shadow-indigo-200 transition-all transform hover:scale-105 active:scale-95">
+                    <i data-lucide="play" class="w-8 h-8 fill-current ml-1" id="play-icon"></i>
+                </button>
+
+                <button onclick="adjustVolume(0.1)" class="text-gray-400 hover:text-indigo-600 transition-colors p-2 rounded-full hover:bg-indigo-50">
+                    <i data-lucide="volume-2" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <div class="flex items-center gap-3 mb-5 px-2">
+                <i data-lucide="volume-1" class="w-4 h-4 text-gray-400"></i>
+                <input type="range" min="0" max="1" step="0.01" value="0.8" class="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" id="volume-slider">
+                <i data-lucide="volume-2" class="w-4 h-4 text-gray-400"></i>
+            </div>
+
+            <div id="visualizer" class="h-8 flex items-center justify-center gap-1 mb-3 opacity-0 transition-opacity duration-300">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
+
+            <div class="flex justify-between border-t border-gray-100 pt-3 text-xs">
+                <span id="mode-footer-info" class="text-gray-500">Modo: Rádio Ao Vivo</span>
+                <a href="https://radiopopgoiaba.uff.br/" target="_blank" class="text-indigo-600 hover:underline flex items-center gap-1">
+                    Pop Goiaba <i data-lucide="external-link" class="w-3 h-3"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Playlist Drawer (Visível apenas no modo Playlists) -->
+        <div id="playlist-drawer" class="hidden bg-gray-50 border-t border-gray-200 max-h-56 overflow-y-auto custom-scrollbar">
+            <div id="playlist-categories" class="divide-y divide-gray-200 text-xs">
+                <!-- Populado via JS estático -->
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT LÓGICO ESTÁTICO (JS PURA) -->
+    <script>
+        lucide.createIcons();
+
+        // 1. CONFIGURAÇÃO DA RÁDIO AO VIVO
+        const LIVE_CONFIG = {
+            stationName: "Rádio Pop Goiaba UFF",
+            description: "Webrádio alternativa da UFF",
+            streamUrl: "https://s37.maxcast.com.br:8450/live" // URL direta capturada da Maxcast
+        };
+
+        // 2. CONFIGURAÇÃO DAS PLAYLISTS / MÚSICAS LOCAIS OU DO GITHUB
+        const PLAYLISTS_CONFIG = [
+            {
+                category: "Pop & Rock",
+                tracks: [
+                    { name: "Música Demo 1", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+                    { name: "Música Demo 2", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" }
+                ]
+            },
+            {
+                category: "MPB & Instrumental",
+                tracks: [
+                    { name: "Música Demo 3", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
+                ]
+            }
+        ];
+
+        let currentMode = 'live'; // 'live' ou 'playlists'
+        let isPlaying = false;
+        let masterVolume = 0.8;
+        const audio = new Audio();
+
+        let currentCatIdx = 0;
+        let currentTrackIdx = 0;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            audio.pause();
+            isPlaying = false;
+            updateUI(false);
+
+            const btnLive = document.getElementById('btn-mode-live');
+            const btnPlaylists = document.getElementById('btn-mode-playlists');
+            const drawer = document.getElementById('playlist-drawer');
+            const liveBadge = document.getElementById('live-badge-container');
+
+            if (mode === 'live') {
+                btnLive.className = "flex-1 py-3 text-xs font-bold text-center text-indigo-600 bg-white border-b-2 border-indigo-600 transition-colors flex items-center justify-center gap-1";
+                btnPlaylists.className = "flex-1 py-3 text-xs font-bold text-center text-gray-500 hover:text-gray-700 transition-colors flex items-center justify-center gap-1";
+                drawer.classList.add('hidden');
+                liveBadge.classList.remove('hidden');
+                document.getElementById('mode-footer-info').innerText = "Modo: Rádio Ao Vivo";
+                loadLiveStream();
+            } else {
+                btnPlaylists.className = "flex-1 py-3 text-xs font-bold text-center text-indigo-600 bg-white border-b-2 border-indigo-600 transition-colors flex items-center justify-center gap-1";
+                btnLive.className = "flex-1 py-3 text-xs font-bold text-center text-gray-500 hover:text-gray-700 transition-colors flex items-center justify-center gap-1";
+                drawer.classList.remove('hidden');
+                liveBadge.classList.add('hidden');
+                document.getElementById('mode-footer-info').innerText = "Modo: Playlists / Músicas";
+                loadPlaylists();
+            }
+        }
+
+        function loadLiveStream() {
+            audio.src = LIVE_CONFIG.streamUrl;
+            audio.load();
+            audio.volume = masterVolume;
+
+            document.getElementById('station-name').innerText = LIVE_CONFIG.stationName;
+            document.getElementById('stream-status').innerText = "Pronto para transmitir";
+            document.getElementById('track-title').innerText = "Transmissão ao Vivo";
+            document.getElementById('track-artist').innerText = "Pop Goiaba UFF - Niterói/RJ";
+            document.getElementById('header-badge').innerText = "UFF";
+        }
+
+        function loadPlaylists() {
+            if (PLAYLISTS_CONFIG.length === 0 || !PLAYLISTS_CONFIG[0].tracks.length) {
+                document.getElementById('stream-status').innerText = "Nenhuma música cadastrada";
+                document.getElementById('track-title').innerText = "Lista vazia";
+                return;
+            }
+
+            renderPlaylistUI();
+
+            const first = PLAYLISTS_CONFIG[0].tracks[0];
+            audio.src = first.url;
+            audio.load();
+            audio.volume = masterVolume;
+
+            document.getElementById('station-name').innerText = "Minha Biblioteca";
+            document.getElementById('stream-status').innerText = "Pronto para reproduzir";
+            document.getElementById('track-title').innerText = first.name;
+            document.getElementById('track-artist').innerText = `Categoria: ${PLAYLISTS_CONFIG[0].category}`;
+            document.getElementById('header-badge').innerText = "MP3";
+        }
+
+        function switchTrack(catIdx, trackIdx) {
+            currentCatIdx = catIdx;
+            currentTrackIdx = trackIdx;
+            const track = PLAYLISTS_CONFIG[catIdx].tracks[trackIdx];
+
+            audio.src = track.url;
+            audio.load();
+            audio.volume = masterVolume;
+
+            audio.play().then(() => {
+                isPlaying = true;
+                updateUI(true);
+                document.getElementById('track-title').innerText = track.name;
+                document.getElementById('track-artist').innerText = `Categoria: ${PLAYLISTS_CONFIG[catIdx].category}`;
+                document.getElementById('stream-status').innerText = "Reproduzindo";
+                renderPlaylistUI();
+            }).catch(err => console.error(err));
+        }
+
+        document.getElementById('play-btn').addEventListener('click', () => {
+            if (!audio.src) return;
+
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+                updateUI(false);
+                document.getElementById('stream-status').innerText = "Pausado";
+            } else {
+                document.getElementById('stream-status').innerText = currentMode === 'live' ? "Conectando ao vivo..." : "Reproduzindo...";
+                audio.play().then(() => {
+                    isPlaying = true;
+                    updateUI(true);
+                    document.getElementById('stream-status').innerText = currentMode === 'live' ? "AO VIVO" : "Reproduzindo";
+                }).catch(err => {
+                    console.error("Erro na reprodução:", err);
+                    document.getElementById('stream-status').innerText = "Erro de conexão";
+                });
+            }
+        });
+
+        function adjustVolume(change) {
+            masterVolume += change;
+            if (masterVolume > 1) masterVolume = 1;
+            if (masterVolume < 0) masterVolume = 0;
+            document.getElementById('volume-slider').value = masterVolume;
+            audio.volume = masterVolume;
+        }
+
+        document.getElementById('volume-slider').addEventListener('input', (e) => {
+            masterVolume = parseFloat(e.target.value);
+            audio.volume = masterVolume;
+        });
+
+        function updateUI(playing) {
+            const icon = document.getElementById('play-icon');
+            const visualizer = document.getElementById('visualizer');
+            
+            if (playing) {
+                icon.setAttribute('data-lucide', 'pause');
+                icon.classList.remove('ml-1');
+                visualizer.classList.remove('opacity-0');
+            } else {
+                icon.setAttribute('data-lucide', 'play');
+                icon.classList.add('ml-1');
+                visualizer.classList.add('opacity-0');
+            }
+            lucide.createIcons();
+        }
+
+        function renderPlaylistUI() {
+            const container = document.getElementById('playlist-categories');
+            container.innerHTML = '';
+
+            PLAYLISTS_CONFIG.forEach((cat, catIdx) => {
+                const catDiv = document.createElement('div');
+                catDiv.className = "p-2 bg-gray-100 border-b border-gray-200";
+                
+                let html = `<p class="font-bold text-indigo-700 uppercase tracking-wider mb-1">📁 ${cat.category}</p><ul class="space-y-1">`;
+                
+                cat.tracks.forEach((track, trackIdx) => {
+                    const isActive = (catIdx === currentCatIdx && trackIdx === currentTrackIdx);
+                    html += `
+                        <li onclick="switchTrack(${catIdx}, ${trackIdx})" class="p-1.5 rounded cursor-pointer transition-colors flex justify-between items-center ${isActive ? 'bg-indigo-600 text-white font-semibold' : 'hover:bg-white text-gray-700'}">
+                            <span>🎵 ${track.name}</span>
+                            ${isActive && isPlaying ? '<span class="text-[10px] animate-pulse">Tocando</span>' : ''}
+                        </li>
+                    `;
+                });
+                
+                html += `</ul>`;
+                catDiv.innerHTML = html;
+                container.appendChild(catDiv);
+            });
+        }
+
+        // Inicializa no modo Rádio Ao Vivo
+        loadLiveStream();
+    </script>
+</body>
+</html>

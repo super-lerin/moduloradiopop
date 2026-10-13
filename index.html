@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pop Goiaba — Rádio Streaming | Cultura & Experiências</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.0/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@5.0.0/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5.0.0/index.css">
+<style>
+  :root{
+    --bg:#0b0708;
+    --bg-2:#140b0d;
+    --goiaba:#ff4d6d;
+    --goiaba-soft:#ff8fa3;
+    --cream:#f5e6d3;
+    --muted:#9a8a8d;
+  }
+  *{box-sizing:border-box}
+  html,body{background:var(--bg);color:var(--cream);font-family:'Inter',sans-serif;scroll-behavior:smooth}
+  .font-display{font-family:'Space Grotesk',sans-serif;letter-spacing:-0.02em}
+  .font-mono{font-family:'JetBrains Mono',monospace}
+  
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:100;opacity:.06;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  
+  .gradient-goiaba{
+    background:radial-gradient(circle at 20% 20%, rgba(255,77,109,.25), transparent 50%),
+               radial-gradient(circle at 80% 60%, rgba(255,143,163,.15), transparent 50%),
+               linear-gradient(180deg, #0b0708 0%, #140b0d 100%);
+  }
+  
+  .glow{
+    box-shadow:0 0 60px rgba(255,77,109,.35), 0 0 120px rgba(255,77,109,.15);
+  }
+  
+  .pulse-dot{
+    animation:pulseDot 1.5s ease-in-out infinite;
+  }
+  @keyframes pulseDot{
+    0%,100%{opacity:1;transform:scale(1)}
+    50%{opacity:.5;transform:scale(1.3)}
+  }
+  
+  .eq-bar{
+    animation:eq 1s ease-in-out infinite;
+    transform-origin:bottom;
+  }
+  .eq-bar:nth-child(1){animation-delay:0s}
+  .eq-bar:nth-child(2){animation-delay:.15s}
+  .eq-bar:nth-child(3){animation-delay:.3s}
+  .eq-bar:nth-child(4){animation-delay:.45s}
+  .eq-bar:nth-child(5){animation-delay:.6s}
+  @keyframes eq{
+    0%,100%{transform:scaleY(.3)}
+    50%{transform:scaleY(1)}
+  }
+  
+  .vinyl{
+    animation:spin 8s linear infinite;
+    animation-play-state:paused;
+  }
+  .vinyl.playing{animation-play-state:running}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  
+  .card{
+    background:rgba(255,255,255,.02);
+    border:1px solid rgba(255,255,255,.06);
+    backdrop-filter:blur(10px);
+    transition:all .3s ease;
+  }
+  .card:hover{
+    background:rgba(255,77,109,.05);
+    border-color:rgba(255,77,109,.3);
+    transform:translateY(-2px);
+  }
+  
+  .btn-primary{
+    background:var(--goiaba);
+    color:#0b0708;
+    transition:all .3s ease;
+  }
+  .btn-primary:hover{
+    background:var(--goiaba-soft);
+    transform:translateY(-1px);
+    box-shadow:0 10px 30px rgba(255,77,109,.4);
+  }
+  
+  .divider{
+    height:1px;
+    background:linear-gradient(90deg, transparent, rgba(255,77,109,.3), transparent);
+  }
+  
+  .scroll-hint{
+    animation:bounce 2s ease-in-out infinite;
+  }
+  @keyframes bounce{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(6px)}
+  }
+  
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;
+    background:transparent;width:100%;height:20px;cursor:pointer;
+  }
+  input[type=range]::-webkit-slider-runnable-track{
+    height:4px;background:rgba(255,255,255,.1);border-radius:2px;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;
+    width:14px;height:14px;background:var(--goiaba);border-radius:50%;
+    margin-top:-5px;box-shadow:0 0 10px rgba(255,77,109,.6);
+  }
+  input[type=range]::-moz-range-track{
+    height:4px;background:rgba(255,255,255,.1);border-radius:2px;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:14px;height:14px;background:var(--goiaba);border-radius:50%;border:none;
+  }
+  
+  .marquee{
+    display:flex;gap:3rem;animation:marquee 30s linear infinite;white-space:nowrap;
+  }
+  @keyframes marquee{
+    from{transform:translateX(0)}
+    to{transform:translateX(-50%)}
+  }
+  
+  .schedule-item{
+    border-left:2px solid rgba(255,255,255,.08);
+    transition:all .3s ease;
+  }
+  .schedule-item:hover{
+    border-left-color:var(--goiaba);
+    padding-left:1.5rem;
+  }
+  .schedule-item.active{
+    border-left-color:var(--goiaba);
+    background:rgba(255,77,109,.05);
+  }
+  
+  .canvas-wrap{position:relative;height:120px;overflow:hidden;border-radius:12px}
+  #visualizer{width:100%;height:100%;display:block}
+  
+  .tag{
+    display:inline-block;padding:.25rem .75rem;border-radius:999px;
+    background:rgba(255,77,109,.15);color:var(--goiaba-soft);
+    font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;
+    border:1px solid rgba(255,77,109,.2);
+  }
+  
+  .nav-link{position:relative;transition:color .2s}
+  .nav-link::after{
+    content:"";position:absolute;left:0;bottom:-4px;width:0;height:1px;
+    background:var(--goiaba);transition:width .3s;
+  }
+  .nav-link:hover::after{width:100%}
+  .nav-link:hover{color:var(--goiaba-soft)}
+</style>
+</head>
+<body class="gradient-goiaba min-h-screen">
+
+<!-- NAV -->
+<nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-black/40 border-b border-white/5">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="#" class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#ff4d6d] to-[#ff8fa3] flex items-center justify-center">
+        <span class="text-black font-bold text-sm">PG</span>
+      </div>
+      <div class="leading-tight">
+        <div class="font-display font-bold text-sm">Pop Goiaba</div>
+        <div class="text-[10px] text-[#9a8a8d] uppercase tracking-widest">Rádio · Streaming</div>
+      </div>
+    </a>
+    <div class="hidden md:flex items-center gap-8 text-sm text-[#f5e6d3]/80">
+      <a href="#ao-vivo" class="nav-link">Ao Vivo</a>
+      <a href="#programacao" class="nav-link">Programação</a>
+      <a href="#sobre" class="nav-link">Sobre</a>
+      <a href="#acervo" class="nav-link">Acervo</a>
+      <a href="#contato" class="nav-link">Contato</a>
+    </div>
+    <button id="navPlayBtn" class="btn-primary px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-black pulse-dot"></span>
+      Ouvir ao vivo
+    </button>
+  </div>
+</nav>
+
+<!-- HERO / PLAYER -->
+<section id="ao-vivo" class="pt-32 pb-20 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-center gap-3 mb-8">
+      <span class="w-2 h-2 rounded-full bg-[#ff4d6d] pulse-dot"></span>
+      <span class="font-mono text-xs text-[#ff8fa3] uppercase tracking-widest">No ar · Streaming Oficial</span>
+    </div>
+    
+    <div class="grid lg:grid-cols-5 gap-10 items-center">
+      <div class="lg:col-span-2">
+        <h1 class="font-display text-5xl md:text-7xl font-bold leading-[0.95] mb-6">
+          A rádio que<br/>
+          <span class="text-[#ff4d6d]">toca a cultura</span><br/>
+          brasileira.
+        </h1>
+        <p class="text-[#9a8a8d] text-lg mb-8 max-w-md">
+          Música, memória e conversa. Uma programação curada que conecta artistas, histórias e territórios — 24 horas no ar.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <span class="tag">MPB</span>
+          <span class="tag">Jazz</span>
+          <span class="tag">Bossa Nova</span>
+          <span class="tag">World</span>
+          <span class="tag">Documental</span>
+        </div>
+      </div>
+      
+      <div class="lg:col-span-3">
+        <div class="card rounded-3xl p-8 glow">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-2">
+              <div class="flex gap-0.5 items-end h-4">
+                <div class="eq-bar w-1 h-full bg-[#ff4d6d] rounded-full"></div>
+                <div class="eq-bar w-1 h-3 bg-[#ff4d6d] rounded-full"></div>
+                <div class="eq-bar w-1 h-4 bg-[#ff4d6d] rounded-full"></div>
+                <div class="eq-bar w-1 h-2 bg-[#ff4d6d] rounded-full"></div>
+                <div class="eq-bar w-1 h-3 bg-[#ff4d6d] rounded-full"></div>
+              </div>
+              <span class="text-xs font-mono text-[#ff8fa3] uppercase tracking-widest">Ao vivo</span>
+            </div>
+            <span class="text-xs text-[#9a8a8d] font-mono" id="listeners">— ouvintes</span>
+          </div>
+          
+          <div class="flex items-center gap-6 mb-6">
+            <div class="relative">
+              <div id="vinyl" class="vinyl w-24 h-24 rounded-full bg-gradient-to-br from-[#1a1a1a] to-[#000] border-4 border-[#ff4d6d]/30 flex items-center justify-center">
+                <div class="w-8 h-8 rounded-full bg-[#ff4d6d] flex items-center justify-center">
+                  <div class="w-2 h-2 rounded-full bg-black"></div>
+                </div>
+                <div class="absolute inset-2 rounded-full border border-white/5"></div>
+                <div class="absolute inset-5 rounded-full border border-white/5"></div>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="text-xs text-[#9a8a8d] uppercase tracking-widest mb-1">Tocando agora</div>
+              <div id="trackTitle" class="font-display text-2xl font-bold truncate">Pop Goiaba — Sintonia Aberta</div>
+              <div id="trackArtist" class="text-[#ff8fa3] truncate">Programa de abertura · Curadoria Claudio Salles</div>
+            </div>
+          </div>
+          
+          <div class="canvas-wrap mb-6 bg-black/40">
+            <canvas id="visualizer"></canvas>
+          </div>
+          
+          <div class="flex items-center gap-4 mb-6">
+            <button id="playBtn" class="w-16 h-16 rounded-full bg-[#ff4d6d] hover:bg-[#ff8fa3] transition-all flex items-center justify-center group">
+              <svg id="playIcon" class="w-6 h-6 text-black ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              <svg id="pauseIcon" class="w-6 h-6 text-black hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+            </button>
+            <div class="flex-1">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs text-[#9a8a8d] font-mono">STREAMING</span>
+                <span class="text-xs text-[#ff8fa3] font-mono" id="status">PRONTO</span>
+              </div>
+              <div class="h-1 bg-white/10 rounded-full overflow-hidden">
+                <div id="progress" class="h-full bg-gradient-to-r from-[#ff4d6d] to-[#ff8fa3] w-0 transition-all"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-6">
+            <div class="flex items-center gap-2 flex-1">
+              <svg class="w-4 h-4 text-[#9a8a8d]" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+              <input type="range" id="volume" min="0" max="100" value="75" />
+              <span class="text-xs text-[#9a8a8d] font-mono w-8" id="volLabel">75</span>
+            </div>
+            <button id="shareBtn" class="text-[#9a8a8d] hover:text-[#ff8fa3] transition" title="Compartilhar">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+            </button>
+            <button id="favBtn" class="text-[#9a8a8d] hover:text-[#ff4d6d] transition" title="Favoritar">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </button>
+          </div>
+        </div>
+        
+        <div class="mt-4 flex items-center gap-3 px-2">
+          <span class="text-xs text-[#9a8a8d] font-mono">STREAM:</span>
+          <code class="text-xs text-[#ff8fa3] font-mono truncate">https://s37.maxcast.com.br:8450/live</code>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="border-y border-white/5 py-6 overflow-hidden bg-black/30">
+  <div class="marquee">
+    <span class="font-display text-2xl text-[#f5e6d3]/30">✦ MPB</span>
+    <span class="font-display text-2xl text-[#ff4d6d]/50">◈ JAZZ</span>
+    <span class="font-display text-2xl text-[#f5e6d3]/30">◉ BOSSA</span>
+    <span class="font-display text-2xl text-[#ff4d6d]/50">✧ WORLD</span>
+    <span class="font-display text-2xl text-[#f5e6d3]/30">♪ DOCUMENTAL</span>
+    <span class="font-display text-2xl text-[#ff4d6d]/50">✦ CULTURA</span>
+    <span class="font-display text-2xl text-[#f5e6d3]/30">◈ ENTREVISTAS</span>
+    <span class="font-display text-2xl text-[#ff4d6d]/50">◉ SHOWS AO VIVO</span>
+  </div>
+</div>
+
+<!-- PROGRAMAÇÃO -->
+<section id="programacao" class="py-24 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-end justify-between mb-12 flex-wrap gap-4">
+      <div>
+        <div class="font-mono text-xs text-[#ff8fa3] uppercase tracking-widest mb-3">02 · Grade</div>
+        <h2 class="font-display text-4xl md:text-5xl font-bold">Programação<br/>da semana.</h2>
+      </div>
+      <div class="flex gap-2" id="dayTabs"></div>
+    </div>
+    <div id="scheduleList" class="space-y-1"></div>
+  </div>
+</section>
+
+<!-- SOBRE -->
+<section id="sobre" class="py-24 px-6 border-t border-white/5">
+  <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16">
+    <div>
+      <div class="font-mono text-xs text-[#ff8fa3] uppercase tracking-widest mb-3">03 · Conceito</div>
+      <h2 class="font-display text-4xl md:text-5xl font-bold mb-6 leading-tight">
+        Uma rádio que é<br/><span class="text-[#ff4d6d]">experiência cultural.</span>
+      </h2>
+      <p class="text-[#9a8a8d] text-lg mb-4">
+        A Pop Goiaba nasce da mesma frente que concebe projetos culturais, curadorias, produções e conteúdos audiovisuais.
+      </p>
+    </div>
+    <div class="space-y-4">
+      <div class="card rounded-2xl p-6">
+        <h3 class="font-display font-bold text-lg mb-1">Curadoria artística</h3>
+        <p class="text-[#9a8a8d] text-sm">Programas concebidos com identidade própria por curadores especializados.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACERVO -->
+<section id="acervo" class="py-24 px-6 border-t border-white/5">
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-12">
+      <div class="font-mono text-xs text-[#ff8fa3] uppercase tracking-widest mb-3">04 · Acervo</div>
+      <h2 class="font-display text-4xl md:text-5xl font-bold">Programas<br/>em destaque.</h2>
+    </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5" id="showsGrid"></div>
+  </div>
+</section>
+
+<!-- CONTATO -->
+<section id="contato" class="py-24 px-6 border-t border-white/5">
+  <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12">
+    <div>
+      <div class="font-mono text-xs text-[#ff8fa3] uppercase tracking-widest mb-3">05 · Contato</div>
+      <h2 class="font-display text-4xl md:text-5xl font-bold mb-6">Vamos desenhar<br/>a próxima experiência?</h2>
+      <a href="mailto:claudiosalles@hotmail.com" class="card rounded-xl p-5 flex items-center justify-between group">
+        <div>
+          <div class="text-xs text-[#9a8a8d] uppercase tracking-widest mb-1">Direção de projetos</div>
+          <div class="font-display font-semibold">claudiosalles@hotmail.com</div>
+        </div>
+        <span class="text-[#ff4d6d] group-hover:translate-x-1 transition">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-white/5 py-12 px-6">
+  <div class="max-w-7xl mx-auto text-center text-xs text-[#9a8a8d]">
+    © 2026 Pop Goiaba · Cultura & Experiências.
+  </div>
+</footer>
+
+<!-- AUDIO ELEMENT COM O STREAM CORRETO DA MAXCAST -->
+<audio id="radioStream" preload="none">
+  <source src="https://s37.maxcast.com.br:8450/live" type="audio/mpeg">
+</audio>
+
+<script>
+/* ============================================================
+   MÓDULO V2/V3 — Streaming Engine (CORS Seguro)
+   ============================================================ */
+
+const audio = document.getElementById('radioStream');
+const playBtn = document.getElementById('playBtn');
+const navPlayBtn = document.getElementById('navPlayBtn');
+const playIcon = document.getElementById('playIcon');
+const pauseIcon = document.getElementById('pauseIcon');
+const vinyl = document.getElementById('vinyl');
+const statusEl = document.getElementById('status');
+const progress = document.getElementById('progress');
+const volume = document.getElementById('volume');
+const volLabel = document.getElementById('volLabel');
+const listeners = document.getElementById('listeners');
+
+let isPlaying = false;
+
+// Volume inicial
+audio.volume = 0.75;
+
+function togglePlay(){
+  if(isPlaying){
+    audio.pause();
+    isPlaying = false;
+    playIcon.classList.remove('hidden');
+    pauseIcon.classList.add('hidden');
+    vinyl.classList.remove('playing');
+    statusEl.textContent = 'PAUSADO';
+  } else {
+    statusEl.textContent = 'CONECTANDO...';
+    const playPromise = audio.play();
+    if(playPromise !== undefined){
+      playPromise.then(()=>{
+        isPlaying = true;
+        playIcon.classList.add('hidden');
+        pauseIcon.classList.remove('hidden');
+        vinyl.classList.add('playing');
+        statusEl.textContent = 'AO VIVO';
+      }).catch(err=>{
+        statusEl.textContent = 'ERRO DE CONEXÃO';
+        console.warn('Play error:', err);
+      });
+    }
+  }
+}
+
+playBtn.addEventListener('click', togglePlay);
+navPlayBtn.addEventListener('click', ()=>{
+  if(!isPlaying) togglePlay();
+  document.getElementById('ao-vivo').scrollIntoView({behavior:'smooth'});
+});
+
+// Controlo de Volume
+volume.addEventListener('input', e=>{
+  const v = e.target.value / 100;
+  audio.volume = v;
+  volLabel.textContent = e.target.value;
+});
+
+// Eventos do Áudio
+audio.addEventListener('waiting', ()=> statusEl.textContent = 'CONECTANDO...');
+audio.addEventListener('playing', ()=>{
+  statusEl.textContent = 'AO VIVO';
+  listeners.textContent = Math.floor(Math.random()*400 + 180) + ' ouvintes';
+});
+audio.addEventListener('error', ()=> statusEl.textContent = 'VERIFICAR STREAM');
+
+// Partilhar
+document.getElementById('shareBtn').addEventListener('click', async ()=>{
+  const data = { title:'Pop Goiaba — Rádio', text:'Ouça a rádio Pop Goiaba ao vivo', url:location.href };
+  if(navigator.share){ try{ await navigator.share(data); }catch(e){} }
+  else { navigator.clipboard.writeText(location.href); alert('Link copiado!'); }
+});
+
+// Favoritar
+document.getElementById('favBtn').addEventListener('click', (e)=>{
+  e.currentTarget.classList.toggle('text-[#ff4d6d]');
+  e.currentTarget.classList.toggle('text-[#9a8a8d]');
+});
+
+/* ---------- VISUALIZADOR AMBIENTE (Sem CORS) ---------- */
+const canvas = document.getElementById('visualizer');
+const ctx = canvas.getContext('2d');
+function resizeCanvas(){
+  canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+  canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function drawVisualizer(){
+  requestAnimationFrame(drawVisualizer);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const t = Date.now()/1000;
+  const bars = 48;
+  const barW = canvas.width / bars;
+  
+  for(let i=0; i<bars; i++){
+    // Se estiver a tocar, anima de forma mais dinâmica; se estiver parado, fica suave
+    const speed = isPlaying ? 5 : 2;
+    const mult = isPlaying ? 0.8 : 0.25;
+    const h = (Math.sin(t*speed + i*0.3) * 0.5 + 0.5) * canvas.height * mult + 4;
+    
+    const gradient = ctx.createLinearGradient(0, canvas.height-h, 0, canvas.height);
+    gradient.addColorStop(0, '#ff8fa3');
+    gradient.addColorStop(1, '#ff4d6d');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(i*barW, canvas.height-h, barW*0.7, h);
+  }
+}
+drawVisualizer();
+
+/* ---------- PROGRAMAÇÃO & ACERVO (Mantidos) ---------- */
+const days = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const schedule = {
+  'Seg': [
+    {h:'06:00',t:'Aurora',d:'MPB clássica para começar o dia',host:'Curadoria PG'},
+    {h:'09:00',t:'Sintonia Aberta',d:'Programa de abertura com entrevistas',host:'Claudio Salles'},
+    {h:'12:00',t:'Meio do Dia',d:'Jazz, bossa e world music',host:'Redação PG'}
+  ],
+  'Ter': [
+    {h:'09:00',t:'Palavra Cantada',d:'Música e literatura em conversa',host:'Convidados'},
+    {h:'12:00',t:'Meio do Dia',d:'Jazz, bossa e world music',host:'Redação PG'}
+  ],
+  'Qua': [
+    {h:'09:00',t:'Sintonia Aberta',d:'Programa de abertura com entrevistas',host:'Claudio Salles'},
+    {h:'12:00',t:'Meio do Dia',d:'Jazz, bossa e world music',host:'Redação PG'}
+  ],
+  'Qui': [
+    {h:'09:00',t:'Conversa de Rádio',d:'Bate-papo com artistas e produtores',host:'Claudio Salles'},
+    {h:'12:00',t:'Meio do Dia',d:'Jazz, bossa e world music',host:'Redação PG'}
+  ],
+  'Sex': [
+    {h:'09:00',t:'Sintonia Aberta',d:'Programa de abertura com entrevistas',host:'Claudio Salles'},
+    {h:'15:00',t:'Pré-Weekend',d:'Aquecimento para o fim de semana',host:'Equipe PG'}
+  ],
+  'Sáb': [
+    {h:'11:00',t:'Kids & Cultura',d:'Programação infantil e educativa',host:'Redação PG'}
+  ],
+  'Dom': [
+    {h:'12:00',t:'Almoço Musical',d:'Trilha para o domingo',host:'Redação PG'}
+  ]
+};
+
+const dayTabs = document.getElementById('dayTabs');
+const scheduleList = document.getElementById('scheduleList');
+const todayIdx = new Date().getDay();
+const today = days[todayIdx];
+let activeDay = schedule[today] ? today : 'Seg';
+
+function renderDays(){
+  dayTabs.innerHTML = '';
+  days.forEach(d=>{
+    const btn = document.createElement('button');
+    btn.textContent = d;
+    btn.className = 'px-4 py-2 rounded-full text-xs font-mono uppercase tracking-widest transition ' +
+      (d===activeDay ? 'bg-[#ff4d6d] text-black' : 'bg-white/5 text-[#9a8a8d] hover:text-[#f5e6d3]');
+    btn.onclick = ()=>{ activeDay = d; renderDays(); renderSchedule(); };
+    dayTabs.appendChild(btn);
+  });
+}
+
+function renderSchedule(){
+  scheduleList.innerHTML = '';
+  const items = schedule[activeDay] || [{h:'09:00',t:'Programação Especial',d:'Curadoria musical contínua 24h',host:'Pop Goiaba'}];
+  
+  items.forEach(it=>{
+    const el = document.createElement('div');
+    el.className = 'schedule-item pl-6 py-5 rounded-r-xl';
+    el.innerHTML = `
+      <div class="flex items-start justify-between gap-6 flex-wrap">
+        <div class="flex items-start gap-5 flex-1 min-w-[240px]">
+          <div class="font-mono text-sm text-[#ff8fa3] pt-1 w-14">${it.h}</div>
+          <div class="flex-1">
+            <h3 class="font-display font-bold text-lg mb-1">${it.t}</h3>
+            <p class="text-[#9a8a8d] text-sm">${it.d}</p>
+          </div>
+        </div>
+        <div class="text-xs text-[#9a8a8d] font-mono">${it.host}</div>
+      </div>
+    `;
+    scheduleList.appendChild(el);
+  });
+}
+
+renderDays();
+renderSchedule();
+
+// Acervo Grid
+const shows = [
+  {t:'Sintonia Aberta',d:'Programa de abertura com entrevistas e curadoria de Claudio Salles.',tag:'Autoral',c:'✦'},
+  {t:'Noite Adentro',d:'Shows ao vivo, gravações históricas e momentos marcantes.',tag:'Shows',c:'♪'},
+  {t:'Documental Sonoro',d:'Histórias, memórias e narrativas da cultura brasileira.',tag:'Documental',c:'◉'}
+];
+const showsGrid = document.getElementById('showsGrid');
+shows.forEach(s=>{
+  const el = document.createElement('div');
+  el.className = 'card rounded-2xl p-6 group cursor-pointer';
+  el.innerHTML = `
+    <div class="flex items-start justify-between mb-4">
+      <div class="w-12 h-12 rounded-xl bg-[#ff4d6d]/20 flex items-center justify-center text-[#ff4d6d] text-xl">${s.c}</div>
+      <span class="tag">${s.tag}</span>
+    </div>
+    <h3 class="font-display font-bold text-xl mb-2">${s.t}</h3>
+    <p class="text-[#9a8a8d] text-sm">${s.d}</p>
+  `;
+  showsGrid.appendChild(el);
+});
+</script>
+</body>
+</html>

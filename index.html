@@ -4,6 +4,36 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Pop Goiaba — Rádio Streaming | Cultura & Experiências</title>
+<meta name="description" content="Música, memória e conversa. Uma programação curada que conecta artistas, histórias e territórios — 24 horas no ar." />
+<meta name="keywords" content="rádio, streaming, cultura, MPB, Jazz, Bossa Nova, música brasileira, Pop Goiaba" />
+<meta name="author" content="Pop Goiaba" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://super-lerin.github.io/moduloradiopop/" />
+
+<!-- Favicon & PWA Theme -->
+<link rel="icon" type="image/jpeg" href="logov2.jpg" />
+<link rel="apple-touch-icon" href="logov2.jpg" />
+<meta name="theme-color" content="#ff4d6d" />
+
+<!-- OPEN GRAPH (Facebook, WhatsApp, LinkedIn, Telegram) -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://super-lerin.github.io/moduloradiopop/" />
+<meta property="og:title" content="Pop Goiaba — Rádio Streaming | Cultura & Experiências" />
+<meta property="og:description" content="A rádio que toca a cultura brasileira. Música, memória e conversa 24 horas no ar." />
+<meta property="og:image" content="https://super-lerin.github.io/moduloradiopop/logov2.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Logo Pop Goiaba" />
+<meta property="og:site_name" content="Pop Goiaba" />
+<meta property="og:locale" content="pt_BR" />
+
+<!-- TWITTER CARDS (X / Twitter) -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content="https://super-lerin.github.io/moduloradiopop/" />
+<meta name="twitter:title" content="Pop Goiaba — Rádio Streaming | Cultura & Experiências" />
+<meta name="twitter:description" content="A rádio que toca a cultura brasileira. Música, memória e conversa 24 horas no ar." />
+<meta name="twitter:image" content="https://super-lerin.github.io/moduloradiopop/logov2.jpg" />
+
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.0/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@5.0.0/index.css">
@@ -18,7 +48,7 @@
     --muted:#9a8a8d;
   }
   *{box-sizing:border-box}
-  html,body{background:var(--bg);color:var(--cream);font-family:'Inter',sans-serif;scroll-behavior:smooth}
+  html,body{background:var(--bg);color:var(--cream);font-family:'Inter',sans-serif;scroll-behavior:smooth;overflow-x:hidden;}
   .font-display{font-family:'Space Grotesk',sans-serif;letter-spacing:-0.02em}
   .font-mono{font-family:'JetBrains Mono',monospace}
   
@@ -88,18 +118,18 @@
     transform:translateY(-1px);
     box-shadow:0 10px 30px rgba(255,77,109,.4);
   }
-  
-  .divider{
-    height:1px;
-    background:linear-gradient(90deg, transparent, rgba(255,77,109,.3), transparent);
+
+  /* ESTILIZAÇÃO DA NOVA LOGO (LOGOV2.JPG) INTEGRADA AO TEMA ESCURO */
+  .brand-logo-img {
+    mix-blend-mode: screen;
+    filter: contrast(1.1) brightness(1.05) drop-shadow(0 0 10px rgba(255,77,109,0.25));
+    object-fit: contain;
   }
-  
-  .scroll-hint{
-    animation:bounce 2s ease-in-out infinite;
-  }
-  @keyframes bounce{
-    0%,100%{transform:translateY(0)}
-    50%{transform:translateY(6px)}
+
+  .vinyl-center-logo {
+    object-fit: cover;
+    filter: contrast(1.15) brightness(1.05);
+    border-radius: 50%;
   }
   
   input[type=range]{
@@ -165,49 +195,52 @@
 
 <!-- NAV -->
 <nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-black/40 border-b border-white/5">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-    <a href="#" class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#ff4d6d] to-[#ff8fa3] flex items-center justify-center">
-        <span class="text-black font-bold text-sm">PG</span>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-2">
+    <a href="https://super-lerin.github.io/moduloradiopop/" class="flex items-center gap-2 sm:gap-3 shrink-0">
+      <div class="h-8 sm:h-9 px-1 rounded-lg bg-black/40 border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+        <img src="logov2.jpg" alt="Logo Pop Goiaba" width="60" height="36" loading="eager" decoding="async" class="brand-logo-img h-full w-auto" />
       </div>
       <div class="leading-tight">
-        <div class="font-display font-bold text-sm">Pop Goiaba</div>
-        <div class="text-[10px] text-[#9a8a8d] uppercase tracking-widest">Rádio · Streaming</div>
+        <div class="font-display font-bold text-xs sm:text-sm">Pop Goiaba</div>
+        <div class="text-[9px] sm:text-[10px] text-[#9a8a8d] uppercase tracking-widest">Rádio · Streaming</div>
       </div>
     </a>
-    <div class="hidden md:flex items-center gap-8 text-sm text-[#f5e6d3]/80">
+    <div class="hidden lg:flex items-center gap-6 xl:gap-8 text-sm text-[#f5e6d3]/80">
       <a href="#ao-vivo" class="nav-link">Ao Vivo</a>
       <a href="#programacao" class="nav-link">Programação</a>
       <a href="#sobre" class="nav-link">Sobre</a>
       <a href="#acervo" class="nav-link">Acervo</a>
       <a href="#contato" class="nav-link">Contato</a>
     </div>
-    <button id="navPlayBtn" class="btn-primary px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2">
+    <button id="navPlayBtn" class="btn-primary px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-semibold flex items-center gap-2 shrink-0">
       <span class="w-2 h-2 rounded-full bg-black pulse-dot"></span>
-      Ouvir ao vivo
+      <span>Ouvir ao vivo</span>
     </button>
   </div>
 </nav>
 
 <!-- HERO / PLAYER -->
-<section id="ao-vivo" class="pt-32 pb-20 px-6">
+<section id="ao-vivo" class="pt-24 sm:pt-32 pb-12 sm:pb-20 px-4 sm:px-6">
   <div class="max-w-7xl mx-auto">
-    <div class="flex items-center gap-3 mb-8">
+    <div class="flex items-center gap-3 mb-6 sm:mb-8">
       <span class="w-2 h-2 rounded-full bg-[#ff4d6d] pulse-dot"></span>
       <span class="font-mono text-xs text-[#ff8fa3] uppercase tracking-widest">No ar · Streaming Oficial</span>
     </div>
     
-    <div class="grid lg:grid-cols-5 gap-10 items-center">
+    <div class="grid lg:grid-cols-5 gap-8 lg:gap-10 items-center">
       <div class="lg:col-span-2">
-        <h1 class="font-display text-5xl md:text-7xl font-bold leading-[0.95] mb-6">
+        <div class="mb-4 inline-block bg-black/40 p-3 rounded-2xl border border-white/5">
+          <img src="logov2.jpg" alt="Pop Goiaba" width="160" height="80" loading="eager" decoding="async" class="brand-logo-img h-12 w-auto" />
+        </div>
+        <h1 class="font-display text-4xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] sm:leading-[0.95] mb-4 sm:mb-6">
           A rádio que<br/>
           <span class="text-[#ff4d6d]">toca a cultura</span><br/>
           brasileira.
         </h1>
-        <p class="text-[#9a8a8d] text-lg mb-8 max-w-md">
+        <p class="text-[#9a8a8d] text-base sm:text-lg mb-6 sm:mb-8 max-w-md">
           Música, memória e conversa. Uma programação curada que conecta artistas, histórias e territórios — 24 horas no ar.
         </p>
-        <div class="flex flex-wrap gap-3">
+        <div class="flex flex-wrap gap-2 sm:gap-3">
           <span class="tag">MPB</span>
           <span class="tag">Jazz</span>
           <span class="tag">Bossa Nova</span>
@@ -216,9 +249,9 @@
         </div>
       </div>
       
-      <div class="lg:col-span-3">
-        <div class="card rounded-3xl p-8 glow">
-          <div class="flex items-center justify-between mb-6">
+      <div class="lg:col-span-3 w-full">
+        <div class="card rounded-2xl sm:rounded-3xl p-4 sm:p-8 glow w-full">
+          <div class="flex items-center justify-between mb-4 sm:mb-6">
             <div class="flex items-center gap-2">
               <div class="flex gap-0.5 items-end h-4">
                 <div class="eq-bar w-1 h-full bg-[#ff4d6d] rounded-full"></div>
@@ -232,20 +265,20 @@
             <span class="text-xs text-[#9a8a8d] font-mono" id="listeners">— ouvintes</span>
           </div>
           
-          <div class="flex items-center gap-6 mb-6">
-            <div class="relative">
-              <div id="vinyl" class="vinyl w-24 h-24 rounded-full bg-gradient-to-br from-[#1a1a1a] to-[#000] border-4 border-[#ff4d6d]/30 flex items-center justify-center">
-                <div class="w-8 h-8 rounded-full bg-[#ff4d6d] flex items-center justify-center">
-                  <div class="w-2 h-2 rounded-full bg-black"></div>
+          <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-6 text-center sm:text-left">
+            <div class="relative shrink-0">
+              <div id="vinyl" class="vinyl w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-[#1a1a1a] to-[#000] border-4 border-[#ff4d6d]/30 flex items-center justify-center overflow-hidden">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black flex items-center justify-center overflow-hidden p-0.5 shadow-inner border border-white/10">
+                  <img src="logov2.jpg" alt="Pop Goiaba Vinil" width="48" height="48" loading="lazy" class="vinyl-center-logo w-full h-full" />
                 </div>
-                <div class="absolute inset-2 rounded-full border border-white/5"></div>
-                <div class="absolute inset-5 rounded-full border border-white/5"></div>
+                <div class="absolute inset-2 rounded-full border border-white/5 pointer-events-none"></div>
+                <div class="absolute inset-5 rounded-full border border-white/5 pointer-events-none"></div>
               </div>
             </div>
-            <div class="flex-1 min-w-0">
-              <div class="text-xs text-[#9a8a8d] uppercase tracking-widest mb-1">Tocando agora</div>
-              <div id="trackTitle" class="font-display text-2xl font-bold truncate">Pop Goiaba — Sintonia Aberta</div>
-              <div id="trackArtist" class="text-[#ff8fa3] truncate">Programa de abertura · Curadoria Claudio Salles</div>
+            <div class="flex-1 min-w-0 w-full">
+              <div class="text-[10px] sm:text-xs text-[#9a8a8d] uppercase tracking-widest mb-1">Tocando agora</div>
+              <div id="trackTitle" class="font-display text-xl sm:text-2xl font-bold truncate">Pop Goiaba — Sintonia Aberta</div>
+              <div id="trackArtist" class="text-xs sm:text-base text-[#ff8fa3] truncate">Programa de abertura · Curadoria Claudio Salles</div>
             </div>
           </div>
           
@@ -253,15 +286,15 @@
             <canvas id="visualizer"></canvas>
           </div>
           
-          <div class="flex items-center gap-4 mb-6">
-            <button id="playBtn" class="w-16 h-16 rounded-full bg-[#ff4d6d] hover:bg-[#ff8fa3] transition-all flex items-center justify-center group">
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-6">
+            <button id="playBtn" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#ff4d6d] hover:bg-[#ff8fa3] transition-all flex items-center justify-center group mx-auto sm:mx-0 shrink-0">
               <svg id="playIcon" class="w-6 h-6 text-black ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
               <svg id="pauseIcon" class="w-6 h-6 text-black hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
             </button>
-            <div class="flex-1">
+            <div class="flex-1 w-full">
               <div class="flex items-center justify-between mb-1">
-                <span class="text-xs text-[#9a8a8d] font-mono">STREAMING</span>
-                <span class="text-xs text-[#ff8fa3] font-mono" id="status">PRONTO</span>
+                <span class="text-[10px] sm:text-xs text-[#9a8a8d] font-mono">STREAMING</span>
+                <span class="text-[10px] sm:text-xs text-[#ff8fa3] font-mono" id="status">PRONTO</span>
               </div>
               <div class="h-1 bg-white/10 rounded-full overflow-hidden">
                 <div id="progress" class="h-full bg-gradient-to-r from-[#ff4d6d] to-[#ff8fa3] w-0 transition-all"></div>
@@ -269,24 +302,26 @@
             </div>
           </div>
           
-          <div class="flex items-center gap-6">
-            <div class="flex items-center gap-2 flex-1">
-              <svg class="w-4 h-4 text-[#9a8a8d]" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-              <input type="range" id="volume" min="0" max="100" value="75" />
-              <span class="text-xs text-[#9a8a8d] font-mono w-8" id="volLabel">75</span>
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-2 flex-1 min-w-[180px]">
+              <svg class="w-4 h-4 text-[#9a8a8d] shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+              <input type="range" id="volume" min="0" max="100" value="75" class="w-full" />
+              <span class="text-xs text-[#9a8a8d] font-mono w-6 text-right shrink-0" id="volLabel">75</span>
             </div>
-            <button id="shareBtn" class="text-[#9a8a8d] hover:text-[#ff8fa3] transition" title="Compartilhar">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
-            </button>
-            <button id="favBtn" class="text-[#9a8a8d] hover:text-[#ff4d6d] transition" title="Favoritar">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-            </button>
+            <div class="flex items-center gap-4 shrink-0">
+              <button id="shareBtn" class="text-[#9a8a8d] hover:text-[#ff8fa3] transition p-1" title="Compartilhar">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+              </button>
+              <button id="favBtn" class="text-[#9a8a8d] hover:text-[#ff4d6d] transition p-1" title="Favoritar">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+              </button>
+            </div>
           </div>
         </div>
         
-        <div class="mt-4 flex items-center gap-3 px-2">
-          <span class="text-xs text-[#9a8a8d] font-mono">STREAM:</span>
-          <code class="text-xs text-[#ff8fa3] font-mono truncate">https://s37.maxcast.com.br:8450/live</code>
+        <div class="mt-4 flex flex-wrap items-center gap-2 px-2">
+          <span class="text-xs text-[#9a8a8d] font-mono shrink-0">STREAM:</span>
+          <code class="text-xs text-[#ff8fa3] font-mono truncate max-w-full">https://s37.maxcast.com.br:8450/live</code>
         </div>
       </div>
     </div>
@@ -294,48 +329,48 @@
 </section>
 
 <!-- MARQUEE -->
-<div class="border-y border-white/5 py-6 overflow-hidden bg-black/30">
+<div class="border-y border-white/5 py-4 sm:py-6 overflow-hidden bg-black/30">
   <div class="marquee">
-    <span class="font-display text-2xl text-[#f5e6d3]/30">✦ MPB</span>
-    <span class="font-display text-2xl text-[#ff4d6d]/50">◈ JAZZ</span>
-    <span class="font-display text-2xl text-[#f5e6d3]/30">◉ BOSSA</span>
-    <span class="font-display text-2xl text-[#ff4d6d]/50">✧ WORLD</span>
-    <span class="font-display text-2xl text-[#f5e6d3]/30">♪ DOCUMENTAL</span>
-    <span class="font-display text-2xl text-[#ff4d6d]/50">✦ CULTURA</span>
-    <span class="font-display text-2xl text-[#f5e6d3]/30">◈ ENTREVISTAS</span>
-    <span class="font-display text-2xl text-[#ff4d6d]/50">◉ SHOWS AO VIVO</span>
+    <span class="font-display text-xl sm:text-2xl text-[#f5e6d3]/30">✦ MPB</span>
+    <span class="font-display text-xl sm:text-2xl text-[#ff4d6d]/50">◈ JAZZ</span>
+    <span class="font-display text-xl sm:text-2xl text-[#f5e6d3]/30">◉ BOSSA</span>
+    <span class="font-display text-xl sm:text-2xl text-[#ff4d6d]/50">✧ WORLD</span>
+    <span class="font-display text-xl sm:text-2xl text-[#f5e6d3]/30">♪ DOCUMENTAL</span>
+    <span class="font-display text-xl sm:text-2xl text-[#ff4d6d]/50">✦ CULTURA</span>
+    <span class="font-display text-xl sm:text-2xl text-[#f5e6d3]/30">◈ ENTREVISTAS</span>
+    <span class="font-display text-xl sm:text-2xl text-[#ff4d6d]/50">◉ SHOWS AO VIVO</span>
   </div>
 </div>
 
 <!-- PROGRAMAÇÃO -->
-<section id="programacao" class="py-24 px-6">
+<section id="programacao" class="py-12 sm:py-24 px-4 sm:px-6">
   <div class="max-w-7xl mx-auto">
-    <div class="flex items-end justify-between mb-12 flex-wrap gap-4">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12 gap-6">
       <div>
-        <div class="font-mono text-xs text-[#ff8fa3] uppercase tracking-widest mb-3">02 · Grade</div>
-        <h2 class="font-display text-4xl md:text-5xl font-bold">Programação<br/>da semana.</h2>
+        <div class="font-mono text-xs text-[#ff8fa3] uppercase tracking-widest mb-2 sm:mb-3">02 · Grade</div>
+        <h2 class="font-display text-3xl sm:text-5xl font-bold">Programação<br/>da semana.</h2>
       </div>
-      <div class="flex gap-2" id="dayTabs"></div>
+      <div class="flex flex-wrap gap-1.5 sm:gap-2 overflow-x-auto pb-2" id="dayTabs"></div>
     </div>
     <div id="scheduleList" class="space-y-1"></div>
   </div>
 </section>
 
 <!-- SOBRE -->
-<section id="sobre" class="py-24 px-6 border-t border-white/5">
-  <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16">
+<section id="sobre" class="py-12 sm:py-24 px-4 sm:px-6 border-t border-white/5">
+  <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 sm:gap-16">
     <div>
-      <div class="font-mono text-xs text-[#ff8fa3] uppercase tracking-widest mb-3">03 · Conceito</div>
-      <h2 class="font-display text-4xl md:text-5xl font-bold mb-6 leading-tight">
+      <div class="font-mono text-xs text-[#ff8fa3] uppercase tracking-widest mb-2 sm:mb-3">03 · Conceito</div>
+      <h2 class="font-display text-3xl sm:text-5xl font-bold mb-4 sm:mb-6 leading-tight">
         Uma rádio que é<br/><span class="text-[#ff4d6d]">experiência cultural.</span>
       </h2>
-      <p class="text-[#9a8a8d] text-lg mb-4">
+      <p class="text-[#9a8a8d] text-base sm:text-lg mb-4">
         A Pop Goiaba nasce da mesma frente que concebe projetos culturais, curadorias, produções e conteúdos audiovisuais.
       </p>
     </div>
     <div class="space-y-4">
-      <div class="card rounded-2xl p-6">
-        <h3 class="font-display font-bold text-lg mb-1">Curadoria artística</h3>
+      <div class="card rounded-2xl p-5 sm:p-6">
+        <h3 class="font-display font-bold text-base sm:text-lg mb-1">Curadoria artística</h3>
         <p class="text-[#9a8a8d] text-sm">Programas concebidos com identidade própria por curadores especializados.</p>
       </div>
     </div>
@@ -343,37 +378,41 @@
 </section>
 
 <!-- ACERVO -->
-<section id="acervo" class="py-24 px-6 border-t border-white/5">
+<section id="acervo" class="py-12 sm:py-24 px-4 sm:px-6 border-t border-white/5">
   <div class="max-w-7xl mx-auto">
-    <div class="mb-12">
-      <div class="font-mono text-xs text-[#ff8fa3] uppercase tracking-widest mb-3">04 · Acervo</div>
-      <h2 class="font-display text-4xl md:text-5xl font-bold">Programas<br/>em destaque.</h2>
+    <div class="mb-8 sm:mb-12">
+      <div class="font-mono text-xs text-[#ff8fa3] uppercase tracking-widest mb-2 sm:mb-3">04 · Acervo</div>
+      <h2 class="font-display text-3xl sm:text-5xl font-bold">Programas<br/>em destaque.</h2>
     </div>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5" id="showsGrid"></div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5" id="showsGrid"></div>
   </div>
 </section>
 
 <!-- CONTATO -->
-<section id="contato" class="py-24 px-6 border-t border-white/5">
-  <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12">
+<section id="contato" class="py-12 sm:py-24 px-4 sm:px-6 border-t border-white/5">
+  <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 sm:gap-12">
     <div>
-      <div class="font-mono text-xs text-[#ff8fa3] uppercase tracking-widest mb-3">05 · Contato</div>
-      <h2 class="font-display text-4xl md:text-5xl font-bold mb-6">Vamos desenhar<br/>a próxima experiência?</h2>
-      <a href="mailto:claudiosalles@hotmail.com" class="card rounded-xl p-5 flex items-center justify-between group">
-        <div>
-          <div class="text-xs text-[#9a8a8d] uppercase tracking-widest mb-1">Direção de projetos</div>
-          <div class="font-display font-semibold">claudiosalles@hotmail.com</div>
+      <div class="font-mono text-xs text-[#ff8fa3] uppercase tracking-widest mb-2 sm:mb-3">05 · Contato</div>
+      <h2 class="font-display text-3xl sm:text-5xl font-bold mb-6">Vamos desenhar<br/>a próxima experiência?</h2>
+      <a href="mailto:claudiosalles@hotmail.com" class="card rounded-xl p-4 sm:p-5 flex items-center justify-between group">
+        <div class="min-w-0 pr-2">
+          <div class="text-[10px] sm:text-xs text-[#9a8a8d] uppercase tracking-widest mb-1">Direção de projetos</div>
+          <div class="font-display font-semibold text-sm sm:text-base truncate">claudiosalles@hotmail.com</div>
         </div>
-        <span class="text-[#ff4d6d] group-hover:translate-x-1 transition">→</span>
+        <span class="text-[#ff4d6d] group-hover:translate-x-1 transition shrink-0">→</span>
       </a>
     </div>
   </div>
 </section>
 
 <!-- FOOTER -->
-<footer class="border-t border-white/5 py-12 px-6">
-  <div class="max-w-7xl mx-auto text-center text-xs text-[#9a8a8d]">
-    © 2026 Pop Goiaba · Cultura & Experiências.
+<footer class="border-t border-white/5 py-8 sm:py-12 px-4 sm:px-6">
+  <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#9a8a8d]">
+    <div class="flex items-center gap-3">
+      <img src="logov2.jpg" alt="Pop Goiaba" width="50" height="25" loading="lazy" class="brand-logo-img h-6 w-auto opacity-70" />
+      <span>© 2026 Pop Goiaba · Cultura & Experiências.</span>
+    </div>
+    <div>Todos os direitos reservados.</div>
   </div>
 </footer>
 
@@ -453,9 +492,14 @@ audio.addEventListener('error', ()=> statusEl.textContent = 'VERIFICAR STREAM');
 
 // Partilhar
 document.getElementById('shareBtn').addEventListener('click', async ()=>{
-  const data = { title:'Pop Goiaba — Rádio', text:'Ouça a rádio Pop Goiaba ao vivo', url:location.href };
-  if(navigator.share){ try{ await navigator.share(data); }catch(e){} }
-  else { navigator.clipboard.writeText(location.href); alert('Link copiado!'); }
+  const shareUrl = 'https://super-lerin.github.io/moduloradiopop/';
+  const data = { title:'Pop Goiaba — Rádio', text:'Ouça a rádio Pop Goiaba ao vivo', url: shareUrl };
+  if(navigator.share){ 
+    try{ await navigator.share(data); }catch(e){} 
+  } else { 
+    navigator.clipboard.writeText(shareUrl); 
+    alert('Link copiado!'); 
+  }
 });
 
 // Favoritar
@@ -482,7 +526,6 @@ function drawVisualizer(){
   const barW = canvas.width / bars;
   
   for(let i=0; i<bars; i++){
-    // Se estiver a tocar, anima de forma mais dinâmica; se estiver parado, fica suave
     const speed = isPlaying ? 5 : 2;
     const mult = isPlaying ? 0.8 : 0.25;
     const h = (Math.sin(t*speed + i*0.3) * 0.5 + 0.5) * canvas.height * mult + 4;
@@ -496,7 +539,7 @@ function drawVisualizer(){
 }
 drawVisualizer();
 
-/* ---------- PROGRAMAÇÃO & ACERVO (Mantidos) ---------- */
+/* ---------- PROGRAMAÇÃO & ACERVO ---------- */
 const days = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const schedule = {
   'Seg': [
@@ -539,8 +582,8 @@ function renderDays(){
   days.forEach(d=>{
     const btn = document.createElement('button');
     btn.textContent = d;
-    btn.className = 'px-4 py-2 rounded-full text-xs font-mono uppercase tracking-widest transition ' +
-      (d===activeDay ? 'bg-[#ff4d6d] text-black' : 'bg-white/5 text-[#9a8a8d] hover:text-[#f5e6d3]');
+    btn.className = 'px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-mono uppercase tracking-widest transition shrink-0 ' +
+      (d===activeDay ? 'bg-[#ff4d6d] text-black font-semibold' : 'bg-white/5 text-[#9a8a8d] hover:text-[#f5e6d3]');
     btn.onclick = ()=>{ activeDay = d; renderDays(); renderSchedule(); };
     dayTabs.appendChild(btn);
   });
@@ -552,17 +595,17 @@ function renderSchedule(){
   
   items.forEach(it=>{
     const el = document.createElement('div');
-    el.className = 'schedule-item pl-6 py-5 rounded-r-xl';
+    el.className = 'schedule-item pl-4 sm:pl-6 py-4 sm:py-5 rounded-r-xl';
     el.innerHTML = `
-      <div class="flex items-start justify-between gap-6 flex-wrap">
-        <div class="flex items-start gap-5 flex-1 min-w-[240px]">
-          <div class="font-mono text-sm text-[#ff8fa3] pt-1 w-14">${it.h}</div>
-          <div class="flex-1">
-            <h3 class="font-display font-bold text-lg mb-1">${it.t}</h3>
-            <p class="text-[#9a8a8d] text-sm">${it.d}</p>
+      <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-6">
+        <div class="flex items-start gap-3 sm:gap-5 flex-1 min-w-0">
+          <div class="font-mono text-xs sm:text-sm text-[#ff8fa3] pt-0.5 w-12 sm:w-14 shrink-0">${it.h}</div>
+          <div class="flex-1 min-w-0">
+            <h3 class="font-display font-bold text-base sm:text-lg mb-0.5 sm:mb-1 truncate">${it.t}</h3>
+            <p class="text-[#9a8a8d] text-xs sm:text-sm leading-relaxed">${it.d}</p>
           </div>
         </div>
-        <div class="text-xs text-[#9a8a8d] font-mono">${it.host}</div>
+        <div class="text-[11px] sm:text-xs text-[#9a8a8d] font-mono sm:self-start pl-15 sm:pl-0">${it.host}</div>
       </div>
     `;
     scheduleList.appendChild(el);
@@ -581,14 +624,14 @@ const shows = [
 const showsGrid = document.getElementById('showsGrid');
 shows.forEach(s=>{
   const el = document.createElement('div');
-  el.className = 'card rounded-2xl p-6 group cursor-pointer';
+  el.className = 'card rounded-2xl p-5 sm:p-6 group cursor-pointer';
   el.innerHTML = `
     <div class="flex items-start justify-between mb-4">
-      <div class="w-12 h-12 rounded-xl bg-[#ff4d6d]/20 flex items-center justify-center text-[#ff4d6d] text-xl">${s.c}</div>
+      <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#ff4d6d]/20 flex items-center justify-center text-[#ff4d6d] text-lg sm:text-xl">${s.c}</div>
       <span class="tag">${s.tag}</span>
     </div>
-    <h3 class="font-display font-bold text-xl mb-2">${s.t}</h3>
-    <p class="text-[#9a8a8d] text-sm">${s.d}</p>
+    <h3 class="font-display font-bold text-lg sm:text-xl mb-2">${s.t}</h3>
+    <p class="text-[#9a8a8d] text-xs sm:text-sm">${s.d}</p>
   `;
   showsGrid.appendChild(el);
 });
